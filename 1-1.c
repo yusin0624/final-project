@@ -10,7 +10,7 @@ int main()
     b = X/10;
     X = X-10*b;
     C = X;
-    printf("%d+%d+%d = %d\n", a, b, c, a+b+c);
-    printf("%d*%d*%d = %d\n", a, b, c, a*b*c);
+    printf("%d+%d+%d = %d\n", a, b, C, a+b+C);
+    printf("%d*%d*%d = %d\n", a, b, C, a*b*C);
     return 0;
 }
