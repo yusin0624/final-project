@@ -26,6 +26,11 @@ player_gravity = 1  # 重力效果
 bg_x = 0  # 背景 X 座標
 bg_speed = 5  # 背景移動速度
 
+# 雲朵設定
+cloud_x = WIDTH  # 雲朵從畫面右側開始
+cloud_y = 50  # 雲朵的 Y 位置
+cloud_speed = 2  # 雲朵的移動速度
+
 # 遊戲主迴圈
 running = True
 while running:
@@ -57,9 +62,17 @@ while running:
     if bg_x <= -WIDTH:
         bg_x = 0  # 無限循環背景
     
+    # 更新雲朵位置
+    cloud_x -= cloud_speed
+    if cloud_x <= -100:
+        cloud_x = WIDTH  # 讓雲朵重新進入畫面
+    
     # 繪製背景（這裡用填充顏色，未來可以改成背景圖片）
     pygame.draw.rect(screen, (200, 200, 200), (bg_x, 0, WIDTH, HEIGHT))
     pygame.draw.rect(screen, (200, 200, 200), (bg_x + WIDTH, 0, WIDTH, HEIGHT))
+    
+    # 繪製雲朵
+    pygame.draw.ellipse(screen, (220, 220, 220), (cloud_x, cloud_y, 100, 50))
     
     # 繪製角色
     screen.blit(player_img, (player_x, player_y))
