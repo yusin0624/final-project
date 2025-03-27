@@ -24,7 +24,7 @@ player_gravity = 1  # 重力效果
 
 # 背景設定
 bg_x = 0  # 背景 X 座標
-bg_speed = 5  # 背景移動速度
+bg_speed = 7  # 預設較快的背景移動速度
 
 # 雲朵設定
 cloud_x = WIDTH  # 雲朵從畫面右側開始
@@ -46,6 +46,10 @@ while running:
         player_vel_y = -5  # 向上移動
     if keys[pygame.K_s]:
         player_vel_y = 5  # 向下移動
+    if keys[pygame.K_d]:
+        bg_speed = min(bg_speed + 1, 15)  # 增加背景速度但有上限
+    if keys[pygame.K_a]:
+        bg_speed = max(bg_speed - 1, 2)  # 減少背景速度但有下限
     
     # 更新角色位置
     player_y += player_vel_y
