@@ -4,7 +4,7 @@ import pygame
 pygame.init()
 
 # 設定視窗大小
-WIDTH, HEIGHT = 800, 400
+WIDTH, HEIGHT = 1500, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Running Character")
 
@@ -12,8 +12,8 @@ pygame.display.set_caption("Running Character")
 WHITE = (255, 255, 255)
 
 # 載入角色圖片
-player_img = pygame.Surface((40, 60))  # 暫時用一個矩形代替角色
-player_img.fill((0, 0, 255))  # 藍色
+player_img = pygame.image.load("assets/player.png")  # 載入圖片
+player_img = pygame.transform.scale(player_img, (188, 280))  # 縮放至適當大小
 
 # 角色設定
 player_x = 100  # 初始位置
