@@ -1,0 +1,70 @@
+import pygame
+
+# 初始化 Pygame
+pygame.init()
+
+# 設定視窗大小
+WIDTH, HEIGHT = 800, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Running Character")
+
+# 設定顏色
+WHITE = (255, 255, 255)
+
+# 載入角色圖片
+player_img = pygame.Surface((40, 60))  # 暫時用一個矩形代替角色
+player_img.fill((0, 0, 255))  # 藍色
+
+# 角色設定
+player_x = 100  # 初始位置
+player_y = HEIGHT - 80  # 放在地面上
+player_speed = 5  # 移動速度
+player_vel_y = 0  # 垂直速度
+player_gravity = 1  # 重力效果
+
+# 背景設定
+bg_x = 0  # 背景 X 座標
+bg_speed = 5  # 背景移動速度
+
+# 遊戲主迴圈
+running = True
+while running:
+    screen.fill(WHITE)  # 清空畫面
+    
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # 取得鍵盤輸入
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w]:
+        player_vel_y = -5  # 向上移動
+    if keys[pygame.K_s]:
+        player_vel_y = 5  # 向下移動
+    
+    # 更新角色位置
+    player_y += player_vel_y
+    player_vel_y = 0  # 防止持續加速
+    
+    # 限制角色不超出視窗範圍
+    if player_y < 0:
+        player_y = 0
+    if player_y > HEIGHT - 60:
+        player_y = HEIGHT - 60
+    
+    # 更新背景位置
+    bg_x -= bg_speed  # 背景往左移動
+    if bg_x <= -WIDTH:
+        bg_x = 0  # 無限循環背景
+    
+    # 繪製背景（這裡用填充顏色，未來可以改成背景圖片）
+    pygame.draw.rect(screen, (200, 200, 200), (bg_x, 0, WIDTH, HEIGHT))
+    pygame.draw.rect(screen, (200, 200, 200), (bg_x + WIDTH, 0, WIDTH, HEIGHT))
+    
+    # 繪製角色
+    screen.blit(player_img, (player_x, player_y))
+    
+    pygame.display.update()
+    pygame.time.delay(30)  # 控制遊戲速度
+
+pygame.quit()
