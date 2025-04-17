@@ -51,6 +51,8 @@ def draw_hp(screen , Player , x , y , width=1500 , height=600) :
     # 名稱與血量數字
     name_text = print.render(f"{Player.name} ({Player.hp} / {Player.max_hp})", True, WHITE)
     screen.blit(name_text , (x , y - 25))
+
+#計算角色狀態
     
 
 
