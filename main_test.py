@@ -23,6 +23,9 @@ player_y = HEIGHT - 280  # 放在地面上
 player_speed = 5  # 移動速度
 player_vel_y = 0  # 垂直速度
 player_gravity = 1  # 重力效果
+#player_name = input("輸入玩家姓名：") 
+#進入第一關
+#entities = create_character(1, player_name)
 
 # 背景設定
 bg_x = 0  # 背景 X 座標
