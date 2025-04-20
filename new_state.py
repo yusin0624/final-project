@@ -13,7 +13,7 @@ class player_and_monster :
         self.hp = max_hp      #用來計算剩餘血量
         self.skills = skills or {} #大招
         self.attack = attack  #普攻
-        self.boss = boss
+        self.boss = boss      #之後用來判斷是否要繼續下一關
         self.alive = True
 
 #設定每個關卡的怪獸數值以及玩家預設血量
