@@ -91,6 +91,7 @@ while running:
 
         calculate_update_state(screen, font, characters, damage_list)
         attack_timer = 0
+        print("本回合傷害：", damage_list)
     else:
         # 沒有攻擊時只顯示血條
         calculate_update_state(screen, font, characters, [0, 0, 0])
