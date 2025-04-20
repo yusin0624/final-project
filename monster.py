@@ -5,7 +5,7 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
-def monster(monster_instance, player_instance, screen):
+def monster(monster_instance, player_instance, screen, monster_pos, player_pos):
     # 判斷是哪個怪物
     if monster_instance.name == "monster1":
         monster_type = "怪獸一號"
@@ -19,37 +19,56 @@ def monster(monster_instance, player_instance, screen):
         #當怪物的hp小於50時開始攻擊玩家
         if monster_instance.mhp < 50:
 
-            # 播放動畫
-            monster_attack_animation(screen, monster_instance, player_instance)
-
-            # 攻擊行為（這裡不扣血，只回傳攻擊資訊）
-            attack_message = f"{monster_type} 正在攻擊 {player_instance.name}!"
-            # 你可以讓它回傳給 state_display 顯示
-            return attack_message
+            # 播放動畫(攻擊玩家)
+            hit = fireball_attack_animation(screen, monster_pos, player_pos)
+            if hit:
+                player_instance.be_attacked(20) #讓玩家扣血
+                return f"{monster_instance.name} 發射火球攻擊 {player_instance.name}!"
         else:
-            return f"don't attack"
-
+            return f"{monster_instance.name} 正在觀察局勢……（血量 > 50,不攻擊）"
     else:
-        # 怪物已經死亡，不攻擊
-        return f"{monster_type} 已經死亡，無法攻擊。"
+        return f"{monster_instance.name} 已死亡，無法攻擊。"
 
 
+def fireball_attack_animation(screen, monster_pos, player_pos):
+    # 載入火球圖片（圖片尺寸建議小一點，約 32x32）(還沒有圖片)
+    fireball_img = pygame.image.load("fireball.png").convert_alpha()
 
-def monster_attack_animation(screen, monster_instance, player_instance):
-    font = pygame.font.SysFont("Arial", 40)
-    attack_text = font.render(f"{monster_instance.name} 攻擊 {player_instance.name}!", True, RED)
+    # 初始位置
+    x, y = monster_pos
 
-    # 畫面閃紅
-    for i in range(3):
-        screen.fill(RED)
-        screen.blit(attack_text, (200, 200))
+    # 終點位置
+    target_x, target_y = player_pos
+
+    # 移動速度
+    speed = 10
+
+    # 計算方向向量
+    dx = target_x - x # x距離差
+    dy = target_y - y # y距離差
+
+    distance = max(1, (dx**2 + dy**2) ** 0.5)  # 用max防止除以 0
+    dir_x = dx / distance
+    dir_y = dy / distance
+
+    while True:
+        screen.fill(BLACK)  # 清除畫面
+
+        # 更新火球位置
+        x += dir_x * speed
+        y += dir_y * speed
+
+        # 畫出火球
+        screen.blit(fireball_img, (x, y))
+
+        # 顯示畫面
         pygame.display.flip()
-        pygame.time.delay(100)
+        pygame.time.delay(30)
 
-        screen.fill(BLACK)
-        screen.blit(attack_text, (200, 200))
-        pygame.display.flip()
-        pygame.time.delay(100)
+        # 到達目標就結束
+        # abs : 絕對值
+        if abs(x - target_x) < 10 and abs(y - target_y) < 10:
+            return True # 回傳命中
 
 
 # 主程式
