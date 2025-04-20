@@ -1,7 +1,7 @@
 import pygame
 import player_attack
 from new_state import create_character, calculate_update_state
-from monster_test import monster
+from monstertest_wendy import monster
 
 # 初始化 Pygame
 pygame.init()
@@ -91,6 +91,7 @@ while running:
 
         calculate_update_state(screen, font, characters, damage_list)
         attack_timer = 0
+        print("本回合傷害：", damage_list)
     else:
         # 沒有攻擊時只顯示血條
         calculate_update_state(screen, font, characters, [0, 0, 0])
