@@ -34,7 +34,7 @@ class Projectile:
         return self.x > width  # 如果攻擊物件超過畫面邊緣，返回 True
 
 
-# 處理玩家攻擊
+"""# 處理玩家攻擊
 def handle_attack(player_x, player_y, projectiles, screen):
     global last_attack_time  # 用 global 把上面的變數拉進來
     current_time = pygame.time.get_ticks()
@@ -49,6 +49,27 @@ def handle_attack(player_x, player_y, projectiles, screen):
     for projectile in projectiles[:]:
         projectile.move()
         if projectile.is_off_screen(1500):
+            projectiles.remove(projectile)
+        else:
+            projectile.draw(screen)"""
+            
+def handle_attack(player_x, player_y, projectiles, screen, monster_rect):
+    global last_attack_time
+    current_time = pygame.time.get_ticks()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_SPACE] and current_time - last_attack_time > cooldown:
+        projectile_type = random.choice(['star', 'moon'])
+        projectile = Projectile(player_x + 50, player_y + 140, projectile_type)
+        projectiles.append(projectile)
+        last_attack_time = current_time
+
+    for projectile in projectiles[:]:
+        projectile.move()
+
+        projectile_rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
+
+        if projectile.is_off_screen(1500) or projectile_rect.colliderect(monster_rect):
             projectiles.remove(projectile)
         else:
             projectile.draw(screen)

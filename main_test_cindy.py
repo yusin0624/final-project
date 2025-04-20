@@ -1,5 +1,6 @@
 import pygame
 import player_attack
+import monster_test_cindy  # 加入這行
 import random
 
 # 初始化 Pygame
@@ -9,10 +10,6 @@ pygame.init()
 WIDTH, HEIGHT = 1500, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
-
-# 顏色
-WHITE = (255, 255, 255)
-DARK_SKY = (65, 105, 225)
 
 # 載入背景圖片
 bg_img = pygame.image.load("assets/background.jpg")
@@ -34,6 +31,8 @@ player_y = HEIGHT - 280
 player_speed = 5
 player_vel_y = 0
 player_gravity = 1
+player_rect = player_img.get_rect(topleft=(player_x, player_y))
+
 
 # 雲朵設定（隨機選圖）
 clouds = []
@@ -47,11 +46,15 @@ for i in range(5):  # 兩朵雲
 # 攻擊物件列表
 projectiles = []
 
+# ✅ 建立怪獸物件
+monster = monster_test_cindy.Monster("小怪獸", 100, (1000, HEIGHT - 200))
+
+attack_timer = 0
+
 # 遊戲主迴圈
 running = True
 while running:
     cloud_speed = 5
-    #screen.fill(DARK_SKY)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -71,6 +74,7 @@ while running:
     # 更新角色位置
     player_y += player_vel_y
     player_vel_y = 0
+    player_rect.topleft = (player_x, player_y)  # 更新 player_rect 的位置
 
     if player_y < 0:
         player_y = 0
@@ -92,8 +96,19 @@ while running:
     # 繪製角色
     screen.blit(player_img, (player_x, player_y))
 
+    # ✅ 繪製怪獸
+    monster.draw(screen)
+
     # 處理攻擊
-    player_attack.handle_attack(player_x, player_y, projectiles, screen)
+    #player_attack.handle_attack(player_x, player_y, projectiles, screen)
+    player_attack.handle_attack(player_x, player_y, projectiles, screen, monster.rect)
+    attack_timer += 1
+    # 怪獸攻擊計時器
+    attack_timer += 1
+    if attack_timer % 30 == 0:  # 每 30 幀攻擊一次
+        monster.attack()
+    monster.update_bullets(player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+
 
     pygame.display.update()
     pygame.time.delay(30)
