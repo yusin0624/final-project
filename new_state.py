@@ -4,6 +4,7 @@ import pygame
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
 
 #設定資料類別
 class player_and_monster :
@@ -81,7 +82,7 @@ def calculate_update_state(screen , font , player_monster , damage_list , x=50 ,
         #否則，將比例設為 0（防止除以 0）。接著，根據這個比例繪製顯示血量的綠色矩形，寬度是 100 * hp_ratio
 
         # 顯示名字 + HP
-        name_text = font.render(f"{player_and_monster.name} HP: {player_and_monster.hp}/{player_and_monster.max_hp}" , True , BLACK)
+        name_text = font.render(f"{player_and_monster.name} HP: {player_and_monster.hp}/{player_and_monster.max_hp}" , True , WHITE)
         screen.blit(name_text , (x + 110 , blood_y))
         
         if not player_and_monster.alive :

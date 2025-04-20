@@ -12,6 +12,9 @@ WIDTH, HEIGHT = 1500, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
 
+# 字型設定
+font = pygame.font.Font(None, 36)
+
 # 載入背景圖片
 bg_img = pygame.image.load("assets/background.jpg")
 bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
