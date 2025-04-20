@@ -17,10 +17,10 @@ class player_and_monster :
         self.alive = True
 
 #設定每個關卡的怪獸數值以及玩家預設血量
-def create_monster(level , playername) :
+def create_character(level , playername) :
     player = player_and_monster(playername , max_hp = 2000 , skills = {"星光閃耀斬": 300 , "流星聖槍": 200 , "光耀審判": 1000})  
     #玩家預設生命值，姓名自動輸入
-
+    monster = None
     #處裡怪獸
     if level == 1 :
         monster = player_and_monster("暗影使徒(Shadow Disciple)" , max_hp=1500 , attack=100)
@@ -36,8 +36,11 @@ def create_monster(level , playername) :
     elif level == 5 :
         monster = player_and_monster("虛無幽靈(Void Phantom)&混沌使徒(Chaos Disciple)" , max_hp=2500 , attack=300)
         boss = player_and_monster("終焉魔神·涅墨西斯(Apocalypse God Nemesis)" , max_hp=8000 , attack=500 , skills = {"大招": 800} , boss = True)
-    
-    return [player , monster , boss]
+    # 如果沒有小兵，就用一個空角色代替（避免報錯）
+    if monster is None:
+        monster = player_and_monster("無" , max_hp=1 , attack=0)
+        monster.alive = False
+    return [player , monster , boss]  
 
 #顯示血條並判斷使否死亡
 def calculate_update_state(screen , font , player_monster , damage_list , x=50 , y=50 , spacing=60) :
@@ -73,7 +76,7 @@ def calculate_update_state(screen , font , player_monster , damage_list , x=50 ,
 
         #算血量比例
         hp_ratio = player_and_monster.hp / player_and_monster.max_hp if player_and_monster.max_hp > 0 else 0
-        pygame.draw.rect(screen , GREEN , (x , player_and_monster , int(100 * hp_ratio) , 20))
+        pygame.draw.rect(screen , GREEN , (x , blood_y , int(100 * hp_ratio) , 20))
         #計算當前血量與最大血量的比例 hp_ratio，如果 max_hp 大於 0，則 hp_ratio = entity.hp / entity.max_hp；
         #否則，將比例設為 0（防止除以 0）。接著，根據這個比例繪製顯示血量的綠色矩形，寬度是 100 * hp_ratio
 
@@ -87,5 +90,5 @@ def calculate_update_state(screen , font , player_monster , damage_list , x=50 ,
         
         death.append(not player_and_monster.alive)
 
-    return death
+    return death #回傳形式 death = [False , True , False]，如果是True代表該角色死亡
             
