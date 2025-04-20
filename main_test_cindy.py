@@ -24,8 +24,8 @@ player_img = pygame.transform.scale(player_img, (250, 250))
 
 # 載入雲朵圖片（兩種）
 cloud_images = [
-    pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (150, 90)),
-    pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (150, 90))
+    pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
+    pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
 ]
 
 # 角色設定
@@ -36,9 +36,8 @@ player_vel_y = 0
 player_gravity = 1
 
 # 雲朵設定（隨機選圖）
-cloud_speed = 5
 clouds = []
-for i in range(2):  # 兩朵雲
+for i in range(5):  # 兩朵雲
     clouds.append({
         "x": WIDTH + i * 500,
         "y": random.randint(30, 150),
@@ -51,7 +50,8 @@ projectiles = []
 # 遊戲主迴圈
 running = True
 while running:
-    screen.fill(DARK_SKY)
+    cloud_speed = 5
+    #screen.fill(DARK_SKY)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
