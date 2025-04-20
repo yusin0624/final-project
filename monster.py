@@ -14,7 +14,7 @@ def monster(monster_instance, player_instance, screen, monster_pos, player_pos, 
     elif monster_instance.name == "monster2":
         monster_type = "怪獸二號"
     else:
-        monster_type = "未知怪獸"
+        return False
 
     # 如果怪物還活著
     if monster_instance.malive:
