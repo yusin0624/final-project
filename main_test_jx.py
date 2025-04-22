@@ -1,6 +1,5 @@
 import pygame
 import player_attack
-import monster
 
 # 初始化 Pygame
 pygame.init()
