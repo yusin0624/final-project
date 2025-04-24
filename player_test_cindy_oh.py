@@ -10,10 +10,11 @@ health = 2000
 attack_power = 100
 player_x = 100
 player_y = main_test_cindy_oh.HEIGHT - 280
-player_rect = player_img.get_rect(topleft=(player_x, player_y))
 # 載入角色圖片
 player_img = pygame.image.load("assets/player.png")
 player_img = pygame.transform.scale(player_img, (250, 250))
+player_rect = player_img.get_rect(topleft=(player_x, player_y))
+
 
 # 定義星星和月亮攻擊物件
 class Projectile:
