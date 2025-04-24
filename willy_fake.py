@@ -1,3 +1,4 @@
+#把它變成function用於主程式呼叫
 import pygame
 import sys
 import random
