@@ -1,6 +1,6 @@
 import pygame
 import player_attack
-import monster_test_cindy  # 加入這行
+import monster_test_cindy
 import random
 
 # 初始化 Pygame

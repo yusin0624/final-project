@@ -119,7 +119,7 @@ while running:
     monster.update_bullets(player_rect)  # 傳遞 player_rect 參數給怪物的子彈
 
     # 怪物攻擊邏輯（每秒）
-    if attack_timer >= 1000:
+    if attack_timer >= 100:
         if characters[1].alive:
             monster(1, characters)
         if characters[2].alive:

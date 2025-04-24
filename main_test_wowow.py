@@ -129,7 +129,7 @@ while running:
 
         # 傳入實際傷害值給血條處理
         damage_list = [
-            0,
+            0, #test  #player never die
             characters[1].attack if characters[1].alive else 0,
             characters[2].attack if characters[2].alive else 0
         ]
