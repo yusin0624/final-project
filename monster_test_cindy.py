@@ -1,87 +1,42 @@
 import pygame
-import time
+import random
 
-# 顏色
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLACK = (0, 0, 0)
-
-# 火球類別
-class Fireball:
-    def __init__(self, screen, start_pos, target_pos, speed=10):
-        self.screen = screen
-        self.x, self.y = start_pos
-        self.target_x, self.target_y = target_pos
-        self.speed = speed
-        self.img = pygame.image.load("fireball.png").convert_alpha()
-        self.img = pygame.transform.scale(self.img, (30, 30))  # 可調整火球大小
-
-        dx = self.target_x - self.x
-        dy = self.target_y - self.y
-        distance = max(1, (dx ** 2 + dy ** 2) ** 0.5)
-        self.dir_x = dx / distance
-        self.dir_y = dy / distance
-
-        self.hit = False
-        self.active = True
-
-    def update(self):
-        if not self.active:
-            return False
-
-        # 移動火球
-        self.x += self.dir_x * self.speed
-        self.y += self.dir_y * self.speed
-
-        # 畫出火球
-        self.screen.blit(self.img, (int(self.x), int(self.y)))
-
-        # 判斷是否命中目標
-        if abs(self.x - self.target_x) < 10 and abs(self.y - self.target_y) < 10:
-            self.hit = True
-            self.active = False
-            return True
-        return False
-
-
-# 怪物類別
 class Monster:
-    def __init__(self, name, hp, pos):
+    def __init__(self, name, health, position):
         self.name = name
-        self.mhp = hp
-        self.malive = True
-        self.pos = pos  # (x, y)
-        #self.img = pygame.image.load("monster.png").convert_alpha()
-        self.img = pygame.image.load("assets/monster.png").convert_alpha()
-        self.img = pygame.transform.scale(self.img, (80, 80))  # 可調整怪物大小
-        self.last_attack_time = 0  # 紀錄上次攻擊時間（用於冷卻）
+        self.health = health
+        self.image = pygame.image.load("assets/monster.png")
+        self.image = pygame.transform.scale(self.image, (200, 200))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = position
+
+        self.bullets = []  # 儲存怪物發射的子彈
+        self.bullet_img = pygame.image.load("assets/fireball.png")
+        self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
+        self.attack_cooldown = 30  # 發射間隔（幀）
+        self.last_attack_time = 0
+        self.attack_power = 10  # 子彈傷害
 
     def draw(self, screen):
-        if self.malive:
-            screen.blit(self.img, self.pos)
+        screen.blit(self.image, self.rect)
+        for bullet in self.bullets:
+            screen.blit(self.bullet_img, bullet)
 
-    def be_attacked(self, dmg):
-        self.mhp -= dmg
-        if self.mhp <= 0:
-            self.malive = False
+    def attack(self):
+        # 發射火球（從怪物中間靠右的位置）
+        bullet_x = self.rect.centerx - 30
+        bullet_y = self.rect.centery - 10
+        self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
 
-    def try_attack(self, player_instance, fireballs, screen):
-        if not self.malive:
-            return f"{self.name} 已死亡，無法攻擊。"
+    def update_bullets(self, player_rect):
+        for bullet in self.bullets[:]:
+            bullet.x -= 10  # 火球向左移動
+            if bullet.colliderect(player_rect):
+                self.health -= self.attack_power
+                #print(f"{self.name} 命中玩家！造成 {self.attack_power} 傷害，目前血量剩下 {self.health}。")
+                self.bullets.remove(bullet)
+                #if self.health <= 0:
+                    #print(f"{self.name} 已死亡。")
+            elif bullet.right < 0:
+                self.bullets.remove(bullet)
 
-        if self.mhp >= 50:
-            return f"{self.name} 正在觀察局勢……（血量 > 50,不攻擊）"
-
-        # 冷卻時間：例如每 1.5 秒才能攻擊一次
-        current_time = time.time()
-        if current_time - self.last_attack_time < 1.5:
-            return f"{self.name} 準備中，尚未冷卻完畢"
-
-        self.last_attack_time = current_time
-
-        # 發射火球
-        new_fireball = Fireball(screen, self.pos, player_instance.pos)
-        fireballs.append(new_fireball)
-
-        return f"{self.name} 發射火球攻擊 {player_instance.name}!"

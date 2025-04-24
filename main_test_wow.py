@@ -1,5 +1,6 @@
 import pygame
 import player_attack
+from new_state import create_character, calculate_update_state
 import monster_test_cindy  # 加入這行
 import random
 
@@ -11,9 +12,8 @@ WIDTH, HEIGHT = 1500, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
 
-# 顏色
-WHITE = (255, 255, 255)
-DARK_SKY = (65, 105, 225)
+# 字型設定
+font = pygame.font.Font(None, 36)
 
 # 載入背景圖片
 bg_img = pygame.image.load("assets/background.jpg")
@@ -35,6 +35,8 @@ player_y = HEIGHT - 280
 player_speed = 5
 player_vel_y = 0
 player_gravity = 1
+player_rect = player_img.get_rect(topleft=(player_x, player_y))
+
 
 # 雲朵設定（隨機選圖）
 clouds = []
@@ -49,7 +51,14 @@ for i in range(5):  # 兩朵雲
 projectiles = []
 
 # ✅ 建立怪獸物件
-monster = monster_test_cindy.Monster("小怪獸", 40, (1000, HEIGHT - 200))
+monster = monster_test_cindy.Monster("小怪獸", 100, (1000, HEIGHT - 200))
+
+attack_timer = 0
+
+# 初始化角色資料
+player_name = "勇者阿光"
+level = 1
+characters = create_character(level, player_name)  # [玩家, 小兵, boss]
 
 # 遊戲主迴圈
 running = True
@@ -74,6 +83,7 @@ while running:
     # 更新角色位置
     player_y += player_vel_y
     player_vel_y = 0
+    player_rect.topleft = (player_x, player_y)  # 更新 player_rect 的位置
 
     if player_y < 0:
         player_y = 0
@@ -99,7 +109,34 @@ while running:
     monster.draw(screen)
 
     # 處理攻擊
-    player_attack.handle_attack(player_x, player_y, projectiles, screen)
+    #player_attack.handle_attack(player_x, player_y, projectiles, screen)
+    player_attack.handle_attack(player_x, player_y, projectiles, screen, monster.rect)
+    attack_timer += 1
+    # 怪獸攻擊計時器
+    attack_timer += 1
+    if attack_timer % 30 == 0:  # 每 30 幀攻擊一次
+        monster.attack()
+    monster.update_bullets(player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+
+    # 怪物攻擊邏輯（每秒）
+    if attack_timer >= 1000:
+        if characters[1].alive:
+            monster(1, characters)
+        if characters[2].alive:
+            monster(2, characters)
+
+        damage_list = [
+            0,
+            characters[1].attack if characters[1].alive else 0,
+            characters[2].attack if characters[2].alive else 0
+        ]
+
+        calculate_update_state(screen, font, characters, damage_list)
+        attack_timer = 0
+        print("本回合傷害：", damage_list)
+    else:
+        # 沒有攻擊時只顯示血條
+        calculate_update_state(screen, font, characters, [0, 0, 0])
 
     pygame.display.update()
     pygame.time.delay(30)

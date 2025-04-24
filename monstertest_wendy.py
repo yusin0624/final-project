@@ -1,14 +1,13 @@
-# monster_test.py
-
 def monster(monster_id, characters):
     """
-    顯示怪物攻擊訊息（不實際扣血）。
-    monster_id: 1 = 小兵，2 = boss
-    characters: [player, minion, boss]
+    怪物攻擊主角，僅印出攻擊訊息（不處理扣血）。
+    
+    參數：
+        monster_id: 1 = 小兵, 2 = boss
+        characters: [玩家, 小兵, boss]
     """
     monster_entity = characters[monster_id]
     player = characters[0]
 
     if monster_entity.alive:
-        damage = monster_entity.attack
-        print(f"👾 怪獸 {monster_entity.name} 攻擊 {player.name}，造成 {damage} 點傷害！")
+        print(f"👾 怪獸 {monster_entity.name} 攻擊 {player.name}，造成 {monster_entity.attack} 點傷害！")
