@@ -52,3 +52,4 @@ class Monster:
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
 
+
