@@ -27,7 +27,7 @@ player_speed = 5
 
 # 載入圖片
 willly = pygame.transform.scale(
-    pygame.image.load("willy.png").convert_alpha(), (80, 80)
+    pygame.image.load("assets/willy.png").convert_alpha(), (80, 80)
     # convert_alpha -> 把圖片轉成支援透明度
 )
 # pygame.transform.scale(..., (80, 80)) -> 縮成 80*80 的大小
@@ -37,7 +37,7 @@ willy_mask = pygame.mask.from_surface(willly)
 # 從圖片建立一個遮罩（mask)記錄哪些像素是不透明的 → 用來進行像素級碰撞偵測
 
 dialog_img = pygame.transform.scale(
-    pygame.image.load("dialog.png").convert_alpha(), (150, 90)
+    pygame.image.load("assets/dialog.png").convert_alpha(), (150, 90)
 )
 dialog_rect = dialog_img.get_rect()
 
