@@ -42,8 +42,8 @@ dialog_img = pygame.transform.scale(
 dialog_rect = dialog_img.get_rect()
 
 # 載入語音
-voice_intro = pygame.mixer.Sound("catchme.wav")
-voice_ouch = pygame.mixer.Sound("ouch.wav")
+voice_intro = pygame.mixer.Sound("assets/catchme.wav")
+voice_ouch = pygame.mixer.Sound("assets/ouch.wav")
 
 # 狀態變數
 score = 0
