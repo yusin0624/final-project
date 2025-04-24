@@ -54,6 +54,8 @@ projectiles = []
 
 # ✅ 建立怪獸物件
 enemy_sprite = monster_test_cindy.Monster("小怪獸", 100, (1000, HEIGHT - 200))
+enemy_sprite.name()
+enemy_sprite.attack()
 
 attack_timer = 0
 
