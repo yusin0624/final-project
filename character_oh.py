@@ -22,12 +22,14 @@ class Projectile:
         elif self.type == 'moon':
             self.image = pygame.image.load("assets/moon.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+        
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+
 
     def move(self):
         self.x += self.speed  # 向右移動
 
     def draw(self, screen):
-        # 繪製圖片
         screen.blit(self.image, (self.x, self.y))
 
     def is_off_screen(self, width):
@@ -35,6 +37,7 @@ class Projectile:
 
 class Player:
     def __init__(self):
+        self.name = "player"
         self.last_attack_time = 0  # 上次攻擊時間（毫秒）
         self.cooldown = 300        # 冷卻時間（300 毫秒 = 0.3 秒）
         self.max_health = 2000
@@ -45,28 +48,30 @@ class Player:
         # 載入角色圖片
         self.img = pygame.image.load("assets/player.png")
         self.img = pygame.transform.scale(self.img, (250, 250))
-        self.rect = self.img.get_rect(topleft=(self.x, self.y))
-        
-    def player_attack(self, projectiles):
+        self.rect = self.img.get_rect(topleft=(self.x + 200, self.y + 200))
+    
+    def player_attack(self, projectiles, screen):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
             projectile_type = random.choice(['star', 'moon'])
-            projectile = Projectile(self.x + 50, self.y + 140, projectile_type)
-            projectiles.append(projectile)
+            new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
+            projectiles.append(new_projectile)
             self.last_attack_time = current_time
 
         for projectile in projectiles[:]:
             projectile.move()
-            projectile_rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
-
-        if projectile_rect.colliderect(Monster(monster1)):
-            Monster(monster1.health) -= self.attack_power
-            print(f"{monster1.health} monster1目前血量")
-            projectile.remove(projectile)
-        elif projectile.is_off_screen(projectile, 1500): #WIDTH = 1500
-            projectiles.remove(projectile)
+            projectile.rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
+            projectile.draw(screen)
             
+            if projectile.rect.colliderect(monster1.rect):
+                monster1.health -= self.attack_power
+                print(f"{monster1.health} monster1目前血量")
+                projectiles.remove(projectile)
+            elif projectile.is_off_screen(1500):
+                projectiles.remove(projectile)
+
+    
 player = Player()
 
 #############
@@ -80,19 +85,19 @@ class Monster:
         self.health = health
         #self.image = pygame.image.load("assets/monster.png")
         #self.image = pygame.transform.scale(self.image, (200, 200))
-        if self.name == "暗影使徒(Shadow Disciple)":
+        if self.name == "Shadow Disciple":
             self.image = pygame.image.load("assets/monster1.png")
-            self.image = pygame.transform.scale(self.image, (200, 200))
+            self.image = pygame.transform.scale(self.image, (400, 400))
             self.bullet_img = pygame.image.load("assets/fireball.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "暗影指揮官(Shadow Commander)":
+        elif self.name == "Shadow Commander":
             self.image = pygame.image.load("assets/monster2.png")
-            self.image = pygame.transform.scale(self.image, (200, 200))
+            self.image = pygame.transform.scale(self.image, (400, 400))
             self.bullet_img = pygame.image.load("assets/fireball2.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "排球姊姊":
+        elif self.name == "Volley Empress":
             self.image = pygame.image.load("assets/monster3.png")
-            self.image = pygame.transform.scale(self.image, (200, 200))
+            self.image = pygame.transform.scale(self.image, (400, 400))
             self.bullet_img = pygame.image.load("assets/fireball3.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.rect = self.image.get_rect()
@@ -113,17 +118,18 @@ class Monster:
         bullet_x = self.rect.centerx - 30
         bullet_y = self.rect.centery - 10
         self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
-
+    
     def update_bullets(self, player):
+        print(f"[debug] {self} {self.name} HP: {self.health}")
         for bullet in self.bullets[:]:
             bullet.x -= 10  # 火球向左移動
-            if bullet.colliderect(Player(player.rect)):
-                Player(player.health) -= self.attack_power
-                print(f"{Player(player.health)} 玩家目前血量")
+            if bullet.colliderect(player.rect):
+                player.health -= self.attack_power
+                print(f"{player.health} 玩家目前血量")
                 self.bullets.remove(bullet)
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
     
-monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (1000, 400)) 
-monster2 = Monster("Shadow Commander", 2000, 2000, 150, (1000, 400)) 
-monster3 = Monster("排球姊姊", 3000, 3000, 175, (1000, 400))
+monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (1000, 200)) 
+monster2 = Monster("Shadow Commander", 2000, 2000, 150, (1000, 200)) 
+monster3 = Monster("Volley Empress", 3000, 3000, 175, (1000, 200))
