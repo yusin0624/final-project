@@ -34,8 +34,8 @@ for i in range(5):  # 兩朵雲
 projectiles = []
 
 monster1 = monster_test_cindy_oh.Monster("暗影使徒(Shadow Disciple)", 1500, 1500, 100, (1000, HEIGHT - 200)) 
-monster2 = monster_test_cindy_oh.Monster("monster2", "暗影指揮官(Shadow Commander)", 2000, 2000, 150, (1000, HEIGHT - 200)) 
-monster3 = monster_test_cindy_oh.Monster("monster3", "排球姊姊", 3000, 3000, 175, (1000, HEIGHT - 200)) 
+monster2 = monster_test_cindy_oh.Monster("暗影指揮官(Shadow Commander)", 2000, 2000, 150, (1000, HEIGHT - 200)) 
+monster3 = monster_test_cindy_oh.Monster("排球姊姊", 3000, 3000, 175, (1000, HEIGHT - 200)) 
 
 attack_timer = 0
 
@@ -63,10 +63,10 @@ while running:
     if keys[pygame.K_a]:
         cloud_speed = 2
 
-    if player_y < 0:
-        player_y = 0
-    if player_y > HEIGHT - 280:
-        player_y = HEIGHT - 280
+    if player_test_cindy_oh.player_y < 0:
+        player_test_cindy_oh.player_y = 0
+    if player_test_cindy_oh.player_y > HEIGHT - 280:
+        player_test_cindy_oh.player_y = HEIGHT - 280
 
     # 繪製背景
     screen.blit(bg_img, (0, 0))
@@ -82,8 +82,8 @@ while running:
 
     # 繪製角色、怪獸
     screen.blit(player_test_cindy_oh.player_img, (player_test_cindy_oh.player_x, player_test_cindy_oh.player_y))
-    if(monster_test_cindy_oh.chapter == 1): monster_test_cindy_oh.monster1.draw(screen)
-    if(monster_test_cindy_oh.chapter == 2): monster_test_cindy_oh.monster2.draw(screen)
+    if(chapter == 1): monster_test_cindy_oh.monster1.draw(screen)
+    if(chapter == 2): monster_test_cindy_oh.monster2.draw(screen)
 
     # 處理攻擊
     #player_attack.handle_attack(player_x, player_y, projectiles, screen)
@@ -92,9 +92,23 @@ while running:
     # 怪獸攻擊計時器
     attack_timer += 1
     if attack_timer % 30 == 0:  # 每 30 幀攻擊一次
-        monster_test_cindy_oh.monster.attack()
-    monster_test_cindy_oh.monster.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+        if (chapter == 1):
+            monster_test_cindy_oh.monster1.attack()
+        elif (chapter == 2):
+            monster_test_cindy_oh.monster2.attack()
+        elif (chapter == 3):
+            monster_test_cindy_oh.monster3.attack()
+            
+    if (chapter == 1):
+        monster_test_cindy_oh.monster1.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+    elif (chapter == 2):
+        monster_test_cindy_oh.monster2.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+    elif (chapter == 3):
+        monster_test_cindy_oh.monster3.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
 
+    # chapter
+    if (monster_test_cindy_oh.monster1.health != 0): chapter = 1
+    elif (monster_test_cindy_oh.monster2.health != 0): chapter = 2
 
     pygame.display.update()
     pygame.time.delay(30)

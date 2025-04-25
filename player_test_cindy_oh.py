@@ -1,7 +1,6 @@
 import pygame
 import random
 import monster_test_cindy_oh
-import main_test_cindy_oh
 
 last_attack_time = 0  # 上次攻擊時間（毫秒）
 cooldown = 300        # 冷卻時間（300 毫秒 = 0.3 秒）
@@ -9,7 +8,7 @@ max_health = 2000
 health = 2000
 attack_power = 100
 player_x = 100
-player_y = main_test_cindy_oh.HEIGHT - 280
+player_y = 600 - 280 #HEIGHT = 600
 # 載入角色圖片
 player_img = pygame.image.load("assets/player.png")
 player_img = pygame.transform.scale(player_img, (250, 250))
@@ -60,12 +59,20 @@ def player_attack(player_x, player_y, projectiles):
 
         projectile_rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
 
+        if projectile_rect.colliderect(monster_test_cindy_oh.monster1.rect):
+            monster_test_cindy_oh.monster1.health -= attack_power
+            print(f"{monster_test_cindy_oh.monster1.health} monster1目前血量")
+            projectile.remove(projectile)
+        elif projectile.is_off_screen(projectile, 1500): #WIDTH = 1500
+            projectiles.remove(projectile)
+                
+        """
         if (monster_test_cindy_oh.chapter == 1): 
             if projectile_rect.colliderect(monster_test_cindy_oh.monster1.rect):
                 monster_test_cindy_oh.monster1.health -= attack_power
                 print(f"{monster_test_cindy_oh.monster1.health} monster1目前血量")
                 projectile.remove(projectile)
-            elif projectile.is_off_screen(projectile, main_test_cindy_oh.WIDTH):
+            elif projectile.is_off_screen(projectile, 1500): #WIDTH = 1500
                 projectiles.remove(projectile)
         
         if (monster_test_cindy_oh.chapter == 2): 
@@ -73,9 +80,9 @@ def player_attack(player_x, player_y, projectiles):
                 monster_test_cindy_oh.monster2.health -= attack_power
                 print(f"{monster_test_cindy_oh.monster2.health} monster1目前血量")
                 projectile.remove(projectile)
-            elif projectile.is_off_screen(projectile, main_test_cindy_oh.WIDTH):
+            elif projectile.is_off_screen(projectile, 1500): #WIDTH = 1500
                 projectiles.remove(projectile)
-        
+        """
         #if projectile.is_off_screen(1500) or projectile_rect.colliderect(monster_rect):
         #    projectiles.remove(projectile)
         #else:
