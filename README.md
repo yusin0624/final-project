@@ -8,3 +8,6 @@ main_test.py是我怕直接改在main.py會炸掉，不知道怎麼改回去，�
 現在最厲害的版本是main_test_wow，但他自己跑一跑會報錯關掉
 main_test_cindy沒有狀態列，但player跟monster都會乖乖射子彈了
 血條顯示我都寫好了，自己複製去各自的檔案，我有分玩家、魔王、小兵的，差在y的值
+
+0426
+在寫transition，沒transition的話可以正常對打、顯示血量、換下一關

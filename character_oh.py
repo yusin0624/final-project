@@ -2,7 +2,7 @@ import pygame
 import random
 
 ############
-###player###
+## player ##
 ############
 
 # 定義星星和月亮攻擊物件
@@ -27,6 +27,12 @@ class Projectile:
 
 
     def move(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            self.speed = 20
+        elif keys[pygame.K_a]:
+            self.speed = 5
+        else: self.speed = 10
         self.x += self.speed  # 向右移動
 
     def draw(self, screen):
@@ -36,21 +42,23 @@ class Projectile:
         return self.x > width  # 如果攻擊物件超過畫面邊緣，返回 True        
 
 class Player:
-    def __init__(self):
+    def __init__(self, attack_power):
         self.name = "player"
         self.last_attack_time = 0  # 上次攻擊時間（毫秒）
         self.cooldown = 300        # 冷卻時間（300 毫秒 = 0.3 秒）
         self.max_health = 2000
         self.health = 2000
-        self.attack_power = 100
+        self.attack_power = attack_power
         self.x = 100
         self.y = 600 - 280 #HEIGHT = 600
         # 載入角色圖片
         self.img = pygame.image.load("assets/player.png")
         self.img = pygame.transform.scale(self.img, (250, 250))
-        self.rect = self.img.get_rect(topleft=(self.x + 200, self.y + 200))
+        #self.rect = self.img.get_rect(topleft=(self.x + 200, self.y + 200))
+        self.rect = pygame.Rect(self.x - 30, self.y + 30, self.img.get_width() - 60, self.img.get_height() - 60)
+
     
-    def player_attack(self, projectiles, screen):
+    def player_attack(self, projectiles, screen, current_monster, attack_power):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
@@ -64,18 +72,18 @@ class Player:
             projectile.rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
             projectile.draw(screen)
             
-            if projectile.rect.colliderect(monster1.rect):
-                monster1.health -= self.attack_power
-                print(f"{monster1.health} monster1目前血量")
+            if projectile.rect.colliderect(current_monster.rect):
+                current_monster.health -= attack_power
+                print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
             elif projectile.is_off_screen(1500):
                 projectiles.remove(projectile)
 
     
-player = Player()
+#player = Player()
 
 #############
-###monster###
+## monster ##
 #############
 
 class Monster:
@@ -92,12 +100,12 @@ class Monster:
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         elif self.name == "Shadow Commander":
             self.image = pygame.image.load("assets/monster2.png")
-            self.image = pygame.transform.scale(self.image, (400, 400))
+            self.image = pygame.transform.scale(self.image, (300, 300))
             self.bullet_img = pygame.image.load("assets/fireball2.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         elif self.name == "Volley Empress":
             self.image = pygame.image.load("assets/monster3.png")
-            self.image = pygame.transform.scale(self.image, (400, 400))
+            self.image = pygame.transform.scale(self.image, (300, 300))
             self.bullet_img = pygame.image.load("assets/fireball3.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.rect = self.image.get_rect()
@@ -120,16 +128,18 @@ class Monster:
         self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
     
     def update_bullets(self, player):
-        print(f"[debug] {self} {self.name} HP: {self.health}")
+        #print(f"[debug] {self} {self.name} HP: {self.health}")
         for bullet in self.bullets[:]:
-            bullet.x -= 10  # 火球向左移動
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_d]:
+                bullet.x -= 20
+            if keys[pygame.K_a]:
+                bullet.x -= 5
+            else:
+                bullet.x -= 10  # 火球向左移動
             if bullet.colliderect(player.rect):
                 player.health -= self.attack_power
                 print(f"{player.health} 玩家目前血量")
                 self.bullets.remove(bullet)
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
-    
-monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (1000, 200)) 
-monster2 = Monster("Shadow Commander", 2000, 2000, 150, (1000, 200)) 
-monster3 = Monster("Volley Empress", 3000, 3000, 175, (1000, 200))
