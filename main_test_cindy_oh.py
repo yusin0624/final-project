@@ -33,6 +33,7 @@ for i in range(5):  # 兩朵雲
 # 攻擊物件列表
 projectiles = []
 
+#前面要加上monster_test_cindy_oh是因為前面沒有寫import monster_test_cindy_oh from monster
 monster1 = monster_test_cindy_oh.Monster("Shadow Disciple", 1500, 1500, 100, (1000, HEIGHT - 200)) 
 monster2 = monster_test_cindy_oh.Monster("Shadow Commander", 2000, 2000, 150, (1000, HEIGHT - 200)) 
 monster3 = monster_test_cindy_oh.Monster("Volley Empress", 3000, 3000, 175, (1000, HEIGHT - 200)) 
