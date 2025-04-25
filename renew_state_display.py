@@ -1,5 +1,6 @@
 import pygame
-import monster_test_cindy_oh
+from character_oh import Player
+from character_oh import Monster
 
 # 顏色設定
 RED = (255, 0, 0)
