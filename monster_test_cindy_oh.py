@@ -8,17 +8,17 @@ class Monster:
         self.health = health
         #self.image = pygame.image.load("assets/monster.png")
         #self.image = pygame.transform.scale(self.image, (200, 200))
-        if self.name == "暗影使徒(Shadow Disciple)":
+        if self.name == "Shadow Disciple":
             self.image = pygame.image.load("assets/monster1.png")
             self.image = pygame.transform.scale(self.image, (200, 200))
             self.bullet_img = pygame.image.load("assets/fireball.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "暗影指揮官(Shadow Commander)":
+        elif self.name == "Shadow Commander":
             self.image = pygame.image.load("assets/monster2.png")
             self.image = pygame.transform.scale(self.image, (200, 200))
             self.bullet_img = pygame.image.load("assets/fireball2.png")
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "排球姊姊":
+        elif self.name == "Volley Empress":
             self.image = pygame.image.load("assets/monster3.png")
             self.image = pygame.transform.scale(self.image, (200, 200))
             self.bullet_img = pygame.image.load("assets/fireball3.png")
@@ -52,6 +52,6 @@ class Monster:
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
     
-monster1 = Monster("暗影使徒(Shadow Disciple)", 1500, 1500, 100, (1000, 400)) 
-monster2 = Monster("暗影指揮官(Shadow Commander)", 2000, 2000, 150, (1000, 400)) 
-monster3 = Monster("排球姊姊", 3000, 3000, 175, (1000, 400))
+monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (1000, 400)) 
+monster2 = Monster("Shadow Commander", 2000, 2000, 150, (1000, 400)) 
+monster3 = Monster("Volley Empress", 3000, 3000, 175, (1000, 400))

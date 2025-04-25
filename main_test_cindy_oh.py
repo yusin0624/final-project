@@ -33,9 +33,9 @@ for i in range(5):  # 兩朵雲
 # 攻擊物件列表
 projectiles = []
 
-monster1 = monster_test_cindy_oh.Monster("暗影使徒(Shadow Disciple)", 1500, 1500, 100, (1000, HEIGHT - 200)) 
-monster2 = monster_test_cindy_oh.Monster("暗影指揮官(Shadow Commander)", 2000, 2000, 150, (1000, HEIGHT - 200)) 
-monster3 = monster_test_cindy_oh.Monster("排球姊姊", 3000, 3000, 175, (1000, HEIGHT - 200)) 
+monster1 = monster_test_cindy_oh.Monster("Shadow Disciple", 1500, 1500, 100, (1000, HEIGHT - 200)) 
+monster2 = monster_test_cindy_oh.Monster("Shadow Commander", 2000, 2000, 150, (1000, HEIGHT - 200)) 
+monster3 = monster_test_cindy_oh.Monster("Volley Empress", 3000, 3000, 175, (1000, HEIGHT - 200)) 
 
 attack_timer = 0
 
