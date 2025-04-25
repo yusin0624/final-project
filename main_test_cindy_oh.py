@@ -51,7 +51,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # 鍵盤輸入
+    # 鍵盤輸入(改變玩家位置)
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
         player_test_cindy_oh.player_y -= 5
