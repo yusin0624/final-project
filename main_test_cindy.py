@@ -39,6 +39,7 @@ projectiles = []
 monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400)) 
 monster2 = Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400)) 
 monster3 = Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400)) 
+transition = Monster("Transition", 100000, 100000, 0, (-100, -100))
 player = Player(100)
 
 attack_timer = 0
@@ -47,17 +48,81 @@ flickering_timer = 0
 mouse_timer = 0
 chapter = 1
 
-def Init():
-    global running
-    global cloud_speed = 10
+#1
+def transition1():
+    global chapter
+    global current_monster
+    current_monster = transition
+    pass
+
+#2
+def battle1():
+    global chapter
+    global current_monster
+    current_monster = monster1
+    monster1.attack()
+    monster1.update_movement(HEIGHT)
+    monster1.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+    monster1.draw(screen)
+    state_img = pygame.image.load("assets/monster3_state.png")
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(monster1, screen, 950, 150, 825, -30, state_img)
+    if monster1.health <= 0: chapter = 3
+
+#3    
+def transition2():
+    global chapter
+    global current_monster
+    current_monster = transition
+
+#4    
+def battle2():
+    global chapter
+    global current_monster
+    current_monster = monster2
+    monster2.attack()
+    monster2.update_movement(HEIGHT)
+    monster2.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+    monster2.draw(screen)
+    state_img = pygame.image.load("assets/monster3_state.png")
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(monster2, screen, 950, 150, 825, -30, state_img)
+
+#5
+def transition3():
+    global chapter
+    global current_monster
+    current_monster = transition
+
+#6
+def battle3():
+    global chapter
+    global current_monster
+    current_monster = monster3
+    monster3.attack()
+    monster3.update_movement(HEIGHT)
+    monster3.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+    monster3.draw(screen)
+    state_img = pygame.image.load("assets/monster3_state.png")
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(monster3, screen, 950, 150, 825, -30, state_img)
+
+#7    
+def transition4():
+    global chapter
+    global current_monster
+    current_monster = transition
+        
+
+# 遊戲主迴圈
+running = True
+while running:
+    global current_monster
+    cloud_speed = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
-
-def UpdateDraw():
-    global screen
     
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
@@ -78,6 +143,7 @@ def UpdateDraw():
         if game_over == "back_to_main":
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
+            continue
     
     if player.y < 280:
         player.y = 280
@@ -90,7 +156,7 @@ def UpdateDraw():
         #print("mouse pressed")
     else:
         player.grow()
-    
+        
     # 繪製背景
     screen.blit(bg_img, (0, 0))
         
@@ -108,72 +174,21 @@ def UpdateDraw():
     state_img = pygame.image.load("assets/player_state.png")
     state_img = pygame.transform.scale(state_img, (560, 280))
     draw_hp(player, screen, 275, 155, 20, -30, state_img)
-    
-    pass
 
-
-# 奇數：transition｜偶數：monster
-
-def transition1():
-    # Transition 1 的畫面
-    pass
-
-def mon1():
-    # 第一隻怪物
-    monster1.attack()
-    monster1.update_movement(HEIGHT)
-    monster1.update_bullets(player, screen)
-
-def transition2():
-    # Transition 2 的畫面
-    pass
-
-def mon2():
-    # 第二隻怪物
-    monster2.attack()
-    monster2.update_movement(HEIGHT)
-    monster2.update_bullets(player, screen)
-
-def transition3():
-    # Transition 3 的畫面
-    pass
-
-def mon3():
-    # 第三隻怪物
-    monster3.attack()
-    monster3.update_movement(HEIGHT)
-    monster3.update_bullets(player, screen)
-
-def transition4():
-    # Transition 4 的畫面
-    pass
-
-# 以此類推～～
-
-# 遊戲主迴圈
-running = True
-while running:
-    Init()
-    UpdateDraw()
-
-    # 這邊新增：依 chapter 執行對應的 function
-    if chapter == 1:
-        transition1()
-    elif chapter == 2:
-        mon1()
-    elif chapter == 3:
-        transition2()
-    elif chapter == 4:
-        mon2()
-    elif chapter == 5:
-        transition3()
-    elif chapter == 6:
-        mon3()
-    elif chapter == 7:
-        transition4()
-    # 以此類推～～
+    if chapter == 1: transition1()
+    elif chapter == 2: battle1()
+    elif chapter == 3: transition2()
+    elif chapter == 4: battle2()
+    elif chapter == 5: transition3()
+    elif chapter == 6: battle3()
+        
+    # player攻擊
+    player.player_attack(projectiles, screen, current_monster, 100)
+   
+    #draw_grid(screen, WIDTH, HEIGHT)
 
     pygame.display.update()
     pygame.time.delay(30)
 
 pygame.quit()
+
