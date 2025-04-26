@@ -140,7 +140,12 @@ class Monster:
         #self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.attack_power = attack_power  # 子彈傷害
         self.damage_images = []
-
+        self.target_y = self.rect.y  # 目前要移動到的目標
+        self.move_speed = 10          # 每幀移動多少，調整順滑程度
+        self.change_target_delay = 60  # 每幾幀重新隨機一次目標，大概1秒(假設60FPS)
+        self.change_target_counter = 0
+        self.last_attack_time = 0  # 上次攻擊時間（毫秒）
+        self.cooldown = 1000        # 冷卻時間（300 毫秒 = 0.5 秒）
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -148,18 +153,48 @@ class Monster:
             screen.blit(self.bullet_img, bullet)
 
     def attack(self):
-        # 發射火球（從怪物中間靠右的位置）
-        bullet_x = self.rect.centerx - 30
-        bullet_y = self.rect.centery - 10
-        self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
+        current_time = pygame.time.get_ticks()
+        if (current_time - self.last_attack_time > self.cooldown):
+            # 發射火球（從怪物中間靠右的位置）
+            bullet_x = self.rect.centerx - 30
+            bullet_y = self.rect.centery - 10
+            self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
+            self.last_attack_time = current_time
+        
+    
+    def update_movement(self, HEIGHT):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            self.move_speed = 20
+        elif keys[pygame.K_a]:
+            self.move_speed = 5
+        else:
+            self.move_speed = 10
+            
+        # 每幀移動到 target_y
+        if self.rect.y < self.target_y:
+            self.rect.y += self.move_speed
+            if self.rect.y > self.target_y:
+                self.rect.y = self.target_y
+        elif self.rect.y > self.target_y:
+            self.rect.y -= self.move_speed
+            if self.rect.y < self.target_y:
+                self.rect.y = self.target_y
+
+        # 每 change_target_delay 幀，換新的 target_y
+        self.change_target_counter += 1
+        if self.change_target_counter >= self.change_target_delay:
+            self.change_target_counter = 0
+            # 每次新的目標位置，讓它在螢幕範圍內合理浮動
+            self.target_y = random.randint(200, HEIGHT - 300)
     
     def update_bullets(self, player, screen):
-        #print(f"[debug] {self} {self.name} HP: {self.health}")
+        #print(f"[debug] {self} {self.name} HP: {self.health}")            
         for bullet in self.bullets[:]:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_d]:
                 bullet.x -= 20
-            if keys[pygame.K_a]:
+            elif keys[pygame.K_a]:
                 bullet.x -= 5
             else:
                 bullet.x -= 10  # 火球向左移動

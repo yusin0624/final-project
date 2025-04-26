@@ -49,7 +49,7 @@ chapter = 1
 # 遊戲主迴圈
 running = True
 while running:
-    cloud_speed = 5
+    cloud_speed = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -57,18 +57,19 @@ while running:
     
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player.y -= 10
-        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
-        player.rect.topleft = (player.x - 20, player.y + 20)
-    if keys[pygame.K_s]:
-        player.y += 10
-        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
-        player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_d]:
         cloud_speed = 20
     if keys[pygame.K_a]:
         cloud_speed = 2
+    if keys[pygame.K_w]:
+        player.y -= cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    elif keys[pygame.K_s]:
+        player.y += cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    
 
     if player.y < 280:
         player.y = 280
@@ -100,6 +101,7 @@ while running:
         elif chapter == 3:
             current_monsters = monster3
         
+        """
         # 怪獸攻擊
         attack_timer += 1
         if attack_timer % 50 == 0:  # 每 50 幀攻擊一次
@@ -110,13 +112,19 @@ while running:
             elif (chapter == 3):
                 monster3.attack()
             print({chapter})
-
+        """
             
         if (chapter == 1):
+            monster1.attack()
+            monster1.update_movement(HEIGHT)
             monster1.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         elif (chapter == 2):
+            monster1.attack()
+            monster2.update_movement(HEIGHT)
             monster2.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         elif (chapter == 3):
+            monster2.attack()
+            monster3.update_movement(HEIGHT)
             monster3.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         
         #monster state
