@@ -44,6 +44,7 @@ player = Player(100)
 attack_timer = 0
 transition_timer = 0
 flickering_timer = 0
+mouse_timer = 0
 chapter = 1
 
 # 遊戲主迴圈
@@ -69,12 +70,17 @@ while running:
         player.y += cloud_speed
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
-    
-
     if player.y < 280:
         player.y = 280
     if player.y > HEIGHT - 260:
         player.y = HEIGHT - 260
+    
+    mouse_pressed = pygame.mouse.get_pressed()
+    if mouse_pressed[0]:  # 左鍵是 index 0
+        player.shrink()
+        #print("mouse pressed")
+    else:
+        player.grow()
         
     # 繪製背景
     screen.blit(bg_img, (0, 0))
@@ -161,10 +167,6 @@ while running:
         screen.blit(transition_img, (500, 150))
                 #screen.blit("assets/transition_1", (1000, 300))
    
-    
-    
-    
-    
     
     # chapter
     if (monster1.health > 0): chapter = 1
