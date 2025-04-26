@@ -11,3 +11,5 @@ main_test_cindy沒有狀態列，但player跟monster都會乖乖射子彈了
 
 0426
 在寫transition，沒transition的話可以正常對打、顯示血量、換下一關
+todo: 找好全部的monster圖片
+      transition寫好
