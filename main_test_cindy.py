@@ -1,13 +1,16 @@
 import pygame
-import player_attack
-import monster_test_cindy
+from character_oh import Player, Monster
 import random
+from renew_state_display import draw_hp
+from draw_grid import draw_grid
+import willlly
 
 # 初始化 Pygame
 pygame.init()
+font = pygame.font.SysFont("couriernew", 28, bold=True)
 
 # 設定視窗大小
-WIDTH, HEIGHT = 1500, 600
+WIDTH, HEIGHT = 1400, 750
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
 
@@ -15,24 +18,11 @@ pygame.display.set_caption("Moon Warriors")
 bg_img = pygame.image.load("assets/background.jpg")
 bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
-# 載入角色圖片
-player_img = pygame.image.load("assets/player.png")
-player_img = pygame.transform.scale(player_img, (250, 250))
-
 # 載入雲朵圖片（兩種）
 cloud_images = [
     pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
     pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
 ]
-
-# 角色設定
-player_x = 100
-player_y = HEIGHT - 280
-player_speed = 5
-player_vel_y = 0
-player_gravity = 1
-player_rect = player_img.get_rect(topleft=(player_x, player_y))
-
 
 # 雲朵設定（隨機選圖）
 clouds = []
@@ -46,44 +36,64 @@ for i in range(5):  # 兩朵雲
 # 攻擊物件列表
 projectiles = []
 
-# ✅ 建立怪獸物件
-monster = monster_test_cindy.Monster("小怪獸", 100, (1000, HEIGHT - 200))
+monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400)) 
+monster2 = Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400)) 
+monster3 = Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400)) 
+player = Player(100)
 
 attack_timer = 0
+transition_timer = 0
+flickering_timer = 0
+mouse_timer = 0
+chapter = 1
 
-# 遊戲主迴圈
-running = True
-while running:
-    cloud_speed = 5
+def Init():
+    global running
+    global cloud_speed = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
 
+def UpdateDraw():
+    global screen
+    
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_vel_y = -5
-    if keys[pygame.K_s]:
-        player_vel_y = 5
     if keys[pygame.K_d]:
         cloud_speed = 20
-    if keys[pygame.K_a]:
+    elif keys[pygame.K_a]:
         cloud_speed = 2
-
-    # 更新角色位置
-    player_y += player_vel_y
-    player_vel_y = 0
-    player_rect.topleft = (player_x, player_y)  # 更新 player_rect 的位置
-
-    if player_y < 0:
-        player_y = 0
-    if player_y > HEIGHT - 280:
-        player_y = HEIGHT - 280
-
+    if keys[pygame.K_w]:
+        player.y -= cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_s]:
+        player.y += cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_q] or keys[pygame.K_e]:
+        game_over = willlly.willy()
+        if game_over == "back_to_main":
+            screen = pygame.display.set_mode((WIDTH, HEIGHT))
+            pygame.display.set_caption("Moon Warriors")
+    
+    if player.y < 280:
+        player.y = 280
+    if player.y > HEIGHT - 260:
+        player.y = HEIGHT - 260
+    
+    mouse_pressed = pygame.mouse.get_pressed()
+    if mouse_pressed[0]:  # 左鍵是 index 0
+        player.shrink()
+        #print("mouse pressed")
+    else:
+        player.grow()
+    
     # 繪製背景
     screen.blit(bg_img, (0, 0))
-
+        
     # 更新並繪製雲朵
     for cloud in clouds:
         cloud["x"] -= cloud_speed
@@ -92,23 +102,76 @@ while running:
             cloud["y"] = random.randint(30, 150)
             cloud["img"] = random.choice(cloud_images)
         screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
-
+        
     # 繪製角色
-    screen.blit(player_img, (player_x, player_y))
+    screen.blit(player.img, (player.x, player.y))
+    state_img = pygame.image.load("assets/player_state.png")
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(player, screen, 275, 155, 20, -30, state_img)
+    
+    pass
 
-    # ✅ 繪製怪獸
-    monster.draw(screen)
 
-    # 處理攻擊
-    #player_attack.handle_attack(player_x, player_y, projectiles, screen)
-    player_attack.handle_attack(player_x, player_y, projectiles, screen, monster.rect)
-    attack_timer += 1
-    # 怪獸攻擊計時器
-    attack_timer += 1
-    if attack_timer % 30 == 0:  # 每 30 幀攻擊一次
-        monster.attack()
-    monster.update_bullets(player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+# 奇數：transition｜偶數：monster
 
+def transition1():
+    # Transition 1 的畫面
+    pass
+
+def mon1():
+    # 第一隻怪物
+    monster1.attack()
+    monster1.update_movement(HEIGHT)
+    monster1.update_bullets(player, screen)
+
+def transition2():
+    # Transition 2 的畫面
+    pass
+
+def mon2():
+    # 第二隻怪物
+    monster2.attack()
+    monster2.update_movement(HEIGHT)
+    monster2.update_bullets(player, screen)
+
+def transition3():
+    # Transition 3 的畫面
+    pass
+
+def mon3():
+    # 第三隻怪物
+    monster3.attack()
+    monster3.update_movement(HEIGHT)
+    monster3.update_bullets(player, screen)
+
+def transition4():
+    # Transition 4 的畫面
+    pass
+
+# 以此類推～～
+
+# 遊戲主迴圈
+running = True
+while running:
+    Init()
+    UpdateDraw()
+
+    # 這邊新增：依 chapter 執行對應的 function
+    if chapter == 1:
+        transition1()
+    elif chapter == 2:
+        mon1()
+    elif chapter == 3:
+        transition2()
+    elif chapter == 4:
+        mon2()
+    elif chapter == 5:
+        transition3()
+    elif chapter == 6:
+        mon3()
+    elif chapter == 7:
+        transition4()
+    # 以此類推～～
 
     pygame.display.update()
     pygame.time.delay(30)

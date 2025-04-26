@@ -2,7 +2,7 @@ import pygame
 from character_oh import Player, Monster
 import random
 from renew_state_display import draw_hp
-from draw_grid import draw_grid  # 假設剛剛那段存成 draw_grid.py
+from draw_grid import draw_grid
 import willlly
 
 # 初始化 Pygame
@@ -10,7 +10,7 @@ pygame.init()
 font = pygame.font.SysFont("couriernew", 28, bold=True)
 
 # 設定視窗大小
-WIDTH, HEIGHT = 1800, 800
+WIDTH, HEIGHT = 1400, 750
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
 
@@ -60,7 +60,7 @@ while running:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
         cloud_speed = 20
-    if keys[pygame.K_a]:
+    elif keys[pygame.K_a]:
         cloud_speed = 2
     if keys[pygame.K_w]:
         player.y -= cloud_speed
@@ -70,9 +70,11 @@ while running:
         player.y += cloud_speed
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
-    elif keys[pygame.K_q] or keys[pygame.K_e]:
+    if keys[pygame.K_q] or keys[pygame.K_e]:
         game_over = willlly.willy()
-        if game_over == "back_to_main": 
+        if game_over == "back_to_main":
+            screen = pygame.display.set_mode((WIDTH, HEIGHT))
+            pygame.display.set_caption("Moon Warriors")
             continue
     
     if player.y < 280:
@@ -102,15 +104,15 @@ while running:
     # 繪製角色
     screen.blit(player.img, (player.x, player.y))
     state_img = pygame.image.load("assets/player_state.png")
-    draw_hp(player, screen, font, 325, 200, 20, -30, state_img)
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(player, screen, 275, 155, 20, -30, state_img)
     
-    if (chapter < 10):      #in chapter(fighting monsters)
-        if chapter == 1:
-            current_monsters = monster1
-        elif chapter == 2:
-            current_monsters = monster2
-        elif chapter == 3:
-            current_monsters = monster3
+    if chapter == 1:
+        current_monsters = monster1
+    elif chapter == 2:
+        current_monsters = monster2
+    elif chapter == 3:
+        current_monsters = monster3
         
         """
         # 怪獸攻擊
@@ -142,15 +144,18 @@ while running:
         if(chapter == 1): 
             monster1.draw(screen)
             state_img = pygame.image.load("assets/monster3_state.png")
-            draw_hp(monster1, screen, font, 1225, 200, 1075, -30, state_img)
+            state_img = pygame.transform.scale(state_img, (560, 280))
+            draw_hp(monster1, screen, 950, 150, 825, -30, state_img)
         elif(chapter == 2): 
             monster2.draw(screen)
             state_img = pygame.image.load("assets/monster3_state.png")
-            draw_hp(monster2, screen, font, 1225, 200, 1075, -30)
+            state_img = pygame.transform.scale(state_img, (560, 280))
+            draw_hp(monster2, screen, 950, 150, 825, -30, state_img)
         elif(chapter == 3):
             monster3.draw(screen)
             state_img = pygame.image.load("assets/monster3_state.png")
-            draw_hp(monster3, screen, font, 1225, 200, 1075, -30)
+            state_img = pygame.transform.scale(state_img, (560, 280))
+            draw_hp(monster3, screen, 950, 150, 825, -30, state_img)
         
         
         # player攻擊
@@ -183,7 +188,6 @@ while running:
     elif(monster3.health > 0): 
         transition_timer = 0
         chapter = 3
-    
     
     #draw_grid(screen, WIDTH, HEIGHT)
 

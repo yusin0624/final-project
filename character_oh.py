@@ -82,7 +82,7 @@ class Player:
         self.original_width = 250
         self.original_height = 250
         self.last_shrink_time = 0  # 用來紀錄上次縮小的時間
-        self.shrink_interval = 0.2  # 每次縮小的最短時間間隔 (秒)
+        self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
 
     def player_attack(self, projectiles, screen, current_monster, attack_power):
         current_time = pygame.time.get_ticks()
@@ -112,29 +112,37 @@ class Player:
                 dmg.draw(screen)
                 if dmg.is_expired():
                     self.damage_images.remove(dmg)
+                    
     def shrink(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_shrink_time >= self.shrink_interval:
-            new_width = int(self.img.get_width() * 0.98)
-            new_height = int(self.img.get_height() * 0.98)
-            if new_width >= 20 and new_height >= 20:
+            new_width = int(self.img.get_width() * 0.9)
+            new_height = int(self.img.get_height() * 0.9)
+            if new_width >= 50 and new_height >= 50:
+                # 只調整 rect 的寬高，不改中心位置
+                self.rect.width = new_width
+                self.rect.height = new_height
                 self.img = pygame.transform.scale(self.original_image, (new_width, new_height))
-                self.rect = self.img.get_rect(center=self.rect.center)
-            else:
+                #self.rect = self.img.get_rect(center=self.rect.center)
+            """else:
                 self.img = pygame.transform.scale(self.original_image, (self.original_width, self.original_height))
-                self.rect = self.img.get_rect(center=self.rect.center)
-            self.last_shrink_time = current_time
+                self.rect = self.img.get_rect(center=self.rect.center)"""
+        else: self.grow()
+        self.last_shrink_time = current_time
 
     def grow(self):
         # 每次放大 102%，但不要超過原本大小
-        new_width = int(self.img.get_width() * 1.02)
-        new_height = int(self.img.get_height() * 1.02)
+        new_width = int(self.img.get_width() * 1.03)
+        new_height = int(self.img.get_height() * 1.03)
         if new_width > self.original_width:
             new_width = self.original_width
         if new_height > self.original_height:
             new_height = self.original_height
+        # 更新 rect 的寬高
+        self.rect.width = new_width
+        self.rect.height = new_height
         self.img = pygame.transform.scale(self.original_image, (new_width, new_height))
-        self.rect = self.img.get_rect(center=self.rect.center)
+        #self.rect = self.img.get_rect(center=self.rect.center)
 
 
 #############
