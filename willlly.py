@@ -76,11 +76,11 @@ def willy_rain(screen, clock):
         pygame.display.flip()
 
 def willy():
-    while True:
-        result = _willy_game()
-        if result:
-            return True
-
+    # while True:
+    result = _willy_game()
+    if result == "back_to_main":
+        return "back_to_main"
+        # return "back_to_main"
 
 
 def _willy_game():
@@ -172,8 +172,9 @@ def _willy_game():
     begin_timer = pygame.time.get_ticks()
     spawn_time = pygame.time.get_ticks()
 
-    running = True
-    while running:
+    #running = True
+    #while running:
+    while True:
         screen.blit(background_img, (0, 0))
         now = pygame.time.get_ticks()
         float_timer += 0.1
@@ -237,8 +238,9 @@ def _willy_game():
 
             pygame.display.flip()
             pygame.time.wait(3000)
-            pygame.quit()
-            return True
+            # pygame.quit()
+            # return True
+            return "back_to_main"
 
 
 
@@ -254,8 +256,9 @@ def _willy_game():
 
             pygame.display.flip()
             pygame.time.wait(3000)
-            pygame.quit()
-            return False
+            # pygame.quit()
+            # return False
+            return "back_to_main"
 
 
         screen.blit(willly, willy_rect)
@@ -323,5 +326,6 @@ def _willy_game():
 
         pygame.display.flip()
         clock.tick(60)
+        
 if __name__ == "__main__":
     willy()             # 正式遊戲

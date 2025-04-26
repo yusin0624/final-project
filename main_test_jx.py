@@ -1,100 +1,195 @@
 import pygame
-import player_attack
+from character_oh import Player, Monster
+import random
+from renew_state_display import draw_hp
+from draw_grid import draw_grid  # 假設剛剛那段存成 draw_grid.py
+import willlly
 
 # 初始化 Pygame
 pygame.init()
+font = pygame.font.SysFont("couriernew", 28, bold=True)
 
 # 設定視窗大小
-WIDTH, HEIGHT = 1500, 600
+WIDTH, HEIGHT = 1800, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Moon Warriors")
 
-# 設定顏色
-WHITE = (255, 255, 255)
-DARK_SKY = (65, 105, 225)
+# 載入背景圖片
+bg_img = pygame.image.load("assets/background.jpg")
+bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
-# 載入角色圖片
-player_img = pygame.image.load("assets/player.png")  # 載入圖片
-#player_img = pygame.transform.scale(player_img, (188, 280))  # 縮放至適當大小
-player_img = pygame.transform.scale(player_img, (250, 250))  # 縮放至適當大小
+# 載入雲朵圖片（兩種）
+cloud_images = [
+    pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
+    pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
+]
 
-
-# 角色設定
-player_x = 100  # 初始位置
-player_y = HEIGHT - 280  # 放在地面上
-player_speed = 5  # 移動速度
-player_vel_y = 0  # 垂直速度
-player_gravity = 1  # 重力效果
-
-# 背景設定
-bg_x = 0  # 背景 X 座標
-bg_speed = 7  # 預設背景移動速度
-
-# 雲朵設定
-cloud_x = WIDTH  # 雲朵從畫面右側開始
-cloud_y = 50  # 雲朵的 Y 位置
+# 雲朵設定（隨機選圖）
+clouds = []
+for i in range(5):  # 兩朵雲
+    clouds.append({
+        "x": WIDTH + i * 500,
+        "y": random.randint(30, 150),
+        "img": random.choice(cloud_images)
+    })
 
 # 攻擊物件列表
 projectiles = []
 
+monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400)) 
+monster2 = Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400)) 
+monster3 = Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400)) 
+player = Player(100)
+
+attack_timer = 0
+transition_timer = 0
+flickering_timer = 0
+mouse_timer = 0
+chapter = 1
+
 # 遊戲主迴圈
 running = True
 while running:
-    cloud_speed = 5  # 雲朵的移動速度
+    cloud_speed = 10
 
-    screen.fill(DARK_SKY)  # 清空畫面
-    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     
-    # 取得鍵盤輸入
+    # 鍵盤輸入
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_vel_y = -5  # 向上移動
-    if keys[pygame.K_s]:
-        player_vel_y = 5  # 向下移動
     if keys[pygame.K_d]:
-        cloud_speed = 20  # 增加背景速度
+        cloud_speed = 20
     if keys[pygame.K_a]:
-        cloud_speed = 2  # 減少背景速度
-            
-    # 更新角色位置
-    player_y += player_vel_y
-    player_vel_y = 0  # 防止持續加速
+        cloud_speed = 2
+    if keys[pygame.K_w]:
+        player.y -= cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_s]:
+        player.y += cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_q] or keys[pygame.K_e]:
+        game_over = willlly.willy()
+        if game_over == "back_to_main": 
+            continue
+
+
+    if player.y < 280:
+        player.y = 280
+    if player.y > HEIGHT - 260:
+        player.y = HEIGHT - 260
     
-    # 限制角色不超出視窗範圍
-    if player_y < 0:
-        player_y = 0
-    if player_y > HEIGHT - 280:
-        player_y = HEIGHT - 280
-    
-    """
-    # 更新背景位置
-    bg_x -= bg_speed  # 背景往左移動
-    if bg_x <= -WIDTH:
-        bg_x = 0  # 無限循環背景
-    """
-    
-    # 更新雲朵位置
-    cloud_x -= cloud_speed
-    if cloud_x <= -100:
-        cloud_x = WIDTH  # 讓雲朵重新進入畫面
-    
-    # 繪製背景（這裡用填充顏色，未來可以改成背景圖片）
-    pygame.draw.rect(screen, DARK_SKY, (bg_x, 0, WIDTH, HEIGHT))
-    pygame.draw.rect(screen, DARK_SKY, (bg_x + WIDTH, 0, WIDTH, HEIGHT))
-    
-    # 繪製雲朵
-    pygame.draw.ellipse(screen, (220, 220, 220), (cloud_x, cloud_y, 100, 50))
-    
+    mouse_pressed = pygame.mouse.get_pressed()
+    if mouse_pressed[0]:  # 左鍵是 index 0
+        player.shrink()
+        #print("mouse pressed")
+    else:
+        player.grow()
+        
+    # 繪製背景
+    screen.blit(bg_img, (0, 0))
+        
+    # 更新並繪製雲朵
+    for cloud in clouds:
+        cloud["x"] -= cloud_speed
+        if cloud["x"] <= -150:
+            cloud["x"] = WIDTH + random.randint(0, 300)
+            cloud["y"] = random.randint(30, 150)
+            cloud["img"] = random.choice(cloud_images)
+        screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
+        
     # 繪製角色
-    screen.blit(player_img, (player_x, player_y))
+    screen.blit(player.img, (player.x, player.y))
+    state_img = pygame.image.load("assets/player_state.png")
+    draw_hp(player, screen, font, 325, 200, 20, -30, state_img)
     
-    # 處理攻擊
-    player_attack.handle_attack(player_x, player_y, projectiles, screen)
+    if (chapter < 10):      #in chapter(fighting monsters)
+        if chapter == 1:
+            current_monsters = monster1
+        elif chapter == 2:
+            current_monsters = monster2
+        elif chapter == 3:
+            current_monsters = monster3
+        
+        """
+        # 怪獸攻擊
+        attack_timer += 1
+        if attack_timer % 50 == 0:  # 每 50 幀攻擊一次
+            if (chapter == 1):
+                monster1.attack()
+            elif (chapter == 2):
+                monster2.attack()
+            elif (chapter == 3):
+                monster3.attack()
+            print({chapter})
+        """
+            
+        if (chapter == 1):
+            monster1.attack()
+            monster1.update_movement(HEIGHT)
+            monster1.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+        elif (chapter == 2):
+            monster1.attack()
+            monster2.update_movement(HEIGHT)
+            monster2.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+        elif (chapter == 3):
+            monster2.attack()
+            monster3.update_movement(HEIGHT)
+            monster3.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+        
+        #monster state
+        if(chapter == 1): 
+            monster1.draw(screen)
+            state_img = pygame.image.load("assets/monster3_state.png")
+            draw_hp(monster1, screen, font, 1225, 200, 1075, -30, state_img)
+        elif(chapter == 2): 
+            monster2.draw(screen)
+            state_img = pygame.image.load("assets/monster3_state.png")
+            draw_hp(monster2, screen, font, 1225, 200, 1075, -30)
+        elif(chapter == 3):
+            monster3.draw(screen)
+            state_img = pygame.image.load("assets/monster3_state.png")
+            draw_hp(monster3, screen, font, 1225, 200, 1075, -30)
+        
+        
+        # player攻擊
+        #player_attack.handle_attack(self, projectiles)
+        player.player_attack(projectiles, screen, current_monsters, 100)
+
+    else:       #transition
+        print(f"chapter: {chapter}, transition_timer:{transition_timer}")
+        # player攻擊
+        #player_attack.handle_attack(self, projectiles)
+        player.player_attack(projectiles, screen, current_monsters, 0)
+        
+        transition_timer += cloud_speed
+        #if (cloud_speed > 1000):
+            #flickering_timer += 5
+            #if (flickering_timer % 10 == 0): 
+        transition_img = pygame.image.load("assets/transition_1.png")
+        transition_img = pygame.transform.scale(transition_img, (333, 188))
+        screen.blit(transition_img, (500, 150))
+                #screen.blit("assets/transition_1", (1000, 300))
+   
     
+    # chapter
+    if (monster1.health > 0): chapter = 1
+    elif (monster1.health <= 0 and transition_timer < 2000): chapter = 11
+    elif (monster2.health > 0): 
+        transition_timer = 0
+        chapter = 2
+    elif(monster2.health == 0 and transition_timer < 2000): chapter = 22
+    elif(monster3.health > 0): 
+        transition_timer = 0
+        chapter = 3
+    
+    
+    #draw_grid(screen, WIDTH, HEIGHT)
+
     pygame.display.update()
-    pygame.time.delay(30)  # 控制遊戲速度
+    pygame.time.delay(30)
 
 pygame.quit()
+

@@ -3,7 +3,7 @@ from character_oh import Player, Monster
 import random
 from renew_state_display import draw_hp
 from draw_grid import draw_grid  # 假設剛剛那段存成 draw_grid.py
-
+import willlly
 
 # 初始化 Pygame
 pygame.init()
@@ -66,10 +66,15 @@ while running:
         player.y -= cloud_speed
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
-    elif keys[pygame.K_s]:
+    if keys[pygame.K_s]:
         player.y += cloud_speed
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
+    elif keys[pygame.K_q] or keys[pygame.K_e]:
+        game_over = willlly.willy()
+        if game_over == "back_to_main": 
+            continue
+    
     if player.y < 280:
         player.y = 280
     if player.y > HEIGHT - 260:
