@@ -1,6 +1,26 @@
 import pygame
 import random
 
+class DamageImage:
+    def __init__(self, x, y, image_path):
+        self.x = x
+        self.y = y
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image, (70, 35))  # 可以自己調大小
+        self.lifetime = 800  # 存活時間（毫秒）
+        self.start_time = pygame.time.get_ticks()
+
+    def update(self):
+        # 飄上去
+        self.y -= 1
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))
+
+    def is_expired(self):
+        return pygame.time.get_ticks() - self.start_time > self.lifetime
+
+
 ############
 ## player ##
 ############
@@ -55,9 +75,9 @@ class Player:
         self.img = pygame.image.load("assets/player.png")
         self.img = pygame.transform.scale(self.img, (250, 250))
         #self.rect = self.img.get_rect(topleft=(self.x + 200, self.y + 200))
-        self.rect = pygame.Rect(self.x - 30, self.y + 30, self.img.get_width() - 60, self.img.get_height() - 60)
+        self.rect = pygame.Rect(self.x - 20, self.y + 20, self.img.get_width() - 60, self.img.get_height() - 60)
+        self.damage_images = []
 
-    
     def player_attack(self, projectiles, screen, current_monster, attack_power):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
@@ -71,16 +91,21 @@ class Player:
             projectile.move()
             projectile.rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
             projectile.draw(screen)
-            
+                    
             if projectile.rect.colliderect(current_monster.rect):
                 current_monster.health -= attack_power
                 print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
+                self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
+
             elif projectile.is_off_screen(1500):
                 projectiles.remove(projectile)
-
-    
-#player = Player()
+        
+        for dmg in self.damage_images[:]:
+                dmg.update()
+                dmg.draw(screen)
+                if dmg.is_expired():
+                    self.damage_images.remove(dmg)
 
 #############
 ## monster ##
@@ -110,11 +135,12 @@ class Monster:
             self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.rect = self.image.get_rect()
         self.rect.topleft = position
-            
         self.bullets = []  # 儲存怪物發射的子彈
         #self.bullet_img = pygame.image.load("assets/fireball.png")
         #self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.attack_power = attack_power  # 子彈傷害
+        self.damage_images = []
+
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
@@ -127,7 +153,7 @@ class Monster:
         bullet_y = self.rect.centery - 10
         self.bullets.append(pygame.Rect(bullet_x, bullet_y, 60, 60))
     
-    def update_bullets(self, player):
+    def update_bullets(self, player, screen):
         #print(f"[debug] {self} {self.name} HP: {self.health}")
         for bullet in self.bullets[:]:
             keys = pygame.key.get_pressed()
@@ -141,5 +167,18 @@ class Monster:
                 player.health -= self.attack_power
                 print(f"{player.health} 玩家目前血量")
                 self.bullets.remove(bullet)
+                if self.name == "Shadow Disciple":
+                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster1_damage.png"))
+                elif self.name == "Shadow Commander":
+                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster2_damage.png"))
+                elif self.name == "Volley Empress":
+                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster3_damage.png"))
+
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
+                
+        for dmg in self.damage_images[:]:
+                dmg.update()
+                dmg.draw(screen)
+                if dmg.is_expired():
+                    self.damage_images.remove(dmg)    
