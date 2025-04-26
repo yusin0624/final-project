@@ -60,11 +60,11 @@ while running:
     if keys[pygame.K_w]:
         player.y -= 10
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
-        player.rect.topleft = (player.x - 30, player.y + 30)
+        player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_s]:
         player.y += 10
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
-        player.rect.topleft = (player.x - 30, player.y + 30)
+        player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_d]:
         cloud_speed = 20
     if keys[pygame.K_a]:
@@ -86,6 +86,11 @@ while running:
             cloud["y"] = random.randint(30, 150)
             cloud["img"] = random.choice(cloud_images)
         screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
+        
+    # 繪製角色
+    screen.blit(player.img, (player.x, player.y))
+    state_img = pygame.image.load("assets/player_state.png")
+    draw_hp(player, screen, font, 325, 200, 20, -30, state_img)
     
     if (chapter < 10):      #in chapter(fighting monsters)
         if chapter == 1:
@@ -108,11 +113,11 @@ while running:
 
             
         if (chapter == 1):
-            monster1.update_bullets(player)  # 傳遞 player_rect 參數給怪物的子彈
+            monster1.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         elif (chapter == 2):
-            monster2.update_bullets(player)  # 傳遞 player_rect 參數給怪物的子彈
+            monster2.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         elif (chapter == 3):
-            monster3.update_bullets(player)  # 傳遞 player_rect 參數給怪物的子彈
+            monster3.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
         
         #monster state
         if(chapter == 1): 
@@ -151,10 +156,7 @@ while running:
     
     
     
-    # 繪製角色
-    screen.blit(player.img, (player.x, player.y))
-    state_img = pygame.image.load("assets/player_state.png")
-    draw_hp(player, screen, font, 325, 200, 20, -30, state_img)
+    
     
     # chapter
     if (monster1.health > 0): chapter = 1
