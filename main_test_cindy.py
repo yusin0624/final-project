@@ -9,6 +9,11 @@ import math
 # 初始化 Pygame
 pygame.init()
 font = pygame.font.SysFont("couriernew", 28, bold=True)
+# 背景音樂播放
+pygame.mixer.init()
+pygame.mixer.music.load("assets/sailormusic.ogg")  # 建議用 ogg 檔
+pygame.mixer.music.play(loops=-1)  # -1 代表無限循環
+
 
 # 設定視窗大小
 WIDTH, HEIGHT = 1400, 750
