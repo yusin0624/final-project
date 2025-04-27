@@ -62,6 +62,8 @@ mouse_timer = 0
 chapter = 1
 current_monster = 0     #index
 phase = "transition"  # "transition" or "battle"
+start_page = pygame.image.load("assets/start.png")
+screen.blit(start_page, (0, 0))
 running = True
 float_timer = 0  # 新增一個計時器
 
@@ -145,7 +147,7 @@ def battle_phase(monster):
         chapter += 1
 
 def gameover():
-    screen.fill((0, 0, 0))  # 畫面變黑
+    """screen.fill((0, 0, 0))  # 畫面變黑
 
     alpha = 0
     scale = 0.5
@@ -172,10 +174,13 @@ def gameover():
         nothing_rect = nothing_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 + 40)))
 
         screen.blit(game_over_text, game_over_rect)
-        screen.blit(nothing_text, nothing_rect)
+        screen.blit(nothing_text, nothing_rect)"""
+    
+    start_page = pygame.image.load("assets/start.png")
+    screen.blit(start_page, (0, 0))
 
-        pygame.display.update()
-        pygame.time.delay(30)
+    pygame.display.update()
+    pygame.time.delay(30)
 
     # 全部出現後，停住讓玩家選擇
     while True:
@@ -191,19 +196,18 @@ def gameover():
                     pygame.quit()
                     exit()
 
-        screen.fill((0, 0, 0))
+        """screen.fill((0, 0, 0))
         screen.blit(game_over_text, game_over_rect)
         screen.blit(nothing_text, nothing_rect)
 
         hint_font = pygame.font.SysFont("couriernew", 32, bold=True)
         hint_text = hint_font.render("Press ENTER to Restart or ESC to Quit", True, (255, 255, 255))
         hint_rect = hint_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
-        screen.blit(hint_text, hint_rect)
+        screen.blit(hint_text, hint_rect)"""
 
         pygame.display.update()
         pygame.time.delay(30)
     
-
 # 遊戲主迴圈
 while running:
     cloud_speed = 10
