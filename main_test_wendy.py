@@ -180,17 +180,17 @@ while running:
 
             # 動態調整字型大小
             dynamic_font_size = int(60 * scale)
-            dynamic_font = pygame.font.SysFont("couriernew", dynamic_font_size, bold=True)
+            dynamic_font = pygame.font.SysFont("couriernew" , dynamic_font_size , bold = True)
 
             # Game Over 字
-            game_over_text = dynamic_font.render("Game Over", True, (255, 0, 0))
+            game_over_text = dynamic_font.render("Game Over" , True , (255 , 0 , 0))
             game_over_text.set_alpha(alpha)
-            game_over_rect = game_over_text.get_rect(center=(WIDTH//2, HEIGHT//2 - 40))
+            game_over_rect = game_over_text.get_rect(center = (WIDTH // 2 , HEIGHT // (2 - 40)))
 
             # Nothing can go wrong 字
-            nothing_text = dynamic_font.render("Nothing can go wrong..." , True , (255, 0, ))
+            nothing_text = dynamic_font.render("Nothing can go wrong..." , True , (255 , 0 , 0))
             nothing_text.set_alpha(alpha)
-            nothing_rect = nothing_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 40))
+            nothing_rect = nothing_text.get_rect(center = (WIDTH // 2 , HEIGHT // (2 + 40)))
 
             screen.blit(game_over_text, game_over_rect)
             screen.blit(nothing_text, nothing_rect)
