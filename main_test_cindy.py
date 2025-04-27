@@ -38,7 +38,7 @@ projectiles = []
 player = Player(100)
 monsters = [
     Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
-    Monster("Blazing Howler", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+    Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
     Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
     Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
 ]
@@ -229,4 +229,3 @@ while running:
     pygame.time.delay(30)
 
 pygame.quit()
-
