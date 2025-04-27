@@ -89,7 +89,7 @@ def transition_phase(cloud_speed):
     
     speed = cloud_speed
     transition_timer += speed
-    # if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
+    if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
     if (transition_timer >= 500):
         draw_hp(monsters[int(chapter / 2)], screen, 950, 150, 825, -30, monsters[int(chapter / 2)].state_img)
 
@@ -172,11 +172,11 @@ while running:
             elapsed = now - start_time
 
             # 每次都清空畫面
-            screen.fill((0 , 0 , 0))
+            screen.fill((0, 0, 0))
 
             # 逐漸增加透明度和大小
-            alpha = min(255 , elapsed // 5)  # 5毫秒增加一點點透明度
-            scale = min(1.5 , 0.5 + elapsed / 2000)  # 2秒內從 0.5x 放大到 1.5x
+            alpha = min(255, elapsed // 5)  # 5毫秒增加一點點透明度
+            scale = min(1.5, 0.5 + elapsed / 2000)  # 2秒內從 0.5x 放大到 1.5x
 
             # 動態調整字型大小
             dynamic_font_size = int(60 * scale)
@@ -201,6 +201,7 @@ while running:
         pygame.time.wait(3000)  # 全部出現後等 3 秒
         running = False
 
+   
     #draw_grid(screen, WIDTH, HEIGHT)
 
     pygame.display.update()
