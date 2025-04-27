@@ -1,6 +1,9 @@
 import pygame
 import random
 
+pygame.init()
+pygame.mixer.init()
+
 class DamageImage:
     def __init__(self, x, y, image_path):
         self.x = x
@@ -103,7 +106,9 @@ class Player:
                 #print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
-
+                voice_player_music = pygame.mixer.Sound("assets/player_attack_music.wav")
+                voice_player_music.play()
+                
             elif projectile.is_off_screen(1500):
                 projectiles.remove(projectile)
         
