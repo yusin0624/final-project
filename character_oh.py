@@ -100,7 +100,7 @@ class Player:
                     
             if projectile.rect.colliderect(current_monster.rect):
                 current_monster.health -= attack_power
-                print(f"{current_monster.health} monster1目前血量")
+                #print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
 
@@ -150,7 +150,7 @@ class Player:
 #############
 
 class Monster:
-    def __init__(self, name, max_health, health, attack_power, position, self_image, bullet_image, state_img):
+    def __init__(self, name, max_health, health, attack_power, position, self_image, bullet_image, state_img, transition_img, damage_img):
         self.name = name
         self.max_health = max_health
         self.health = health
@@ -160,26 +160,9 @@ class Monster:
         self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.state_img = pygame.image.load(state_img)
         self.state_img = pygame.transform.scale(self.state_img, (560, 280))
-        """if self.name == "Transition":
-            self.image = pygame.image.load("assets/monster3.png")
-            self.image = pygame.transform.scale(self.image, (10, 10))
-            self.bullet_img = pygame.image.load("assets/fireball3.png")
-            self.bullet_img = pygame.transform.scale(self.bullet_img, (10, 10))
-        elif self.name == "Shadow Disciple":
-            self.image = pygame.image.load("assets/monster1.png")
-            self.image = pygame.transform.scale(self.image, (400, 400))
-            self.bullet_img = pygame.image.load("assets/fireball.png")
-            self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "Shadow Commander":
-            self.image = pygame.image.load("assets/monster2.png")
-            self.image = pygame.transform.scale(self.image, (300, 300))
-            self.bullet_img = pygame.image.load("assets/fireball2.png")
-            self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
-        elif self.name == "Volley Empress":
-            self.image = pygame.image.load("assets/monster3.png")
-            self.image = pygame.transform.scale(self.image, (300, 300))
-            self.bullet_img = pygame.image.load("assets/fireball3.png")
-            self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))"""
+        self.transition_img = pygame.image.load(transition_img)
+        self.transition_img = pygame.transform.scale(self.transition_img, (560, 280))
+        self.damage_img = damage_img
         self.rect = self.image.get_rect()
         self.rect.topleft = position
         self.bullets = []  # 儲存怪物發射的子彈
@@ -247,15 +230,10 @@ class Monster:
                 bullet.x -= 10  # 火球向左移動
             if bullet.colliderect(player.rect):
                 player.health -= self.attack_power
-                print(f"{player.health} 玩家目前血量")
+                # print(f"{player.health} 玩家目前血量")
                 self.bullets.remove(bullet)
-                if self.name == "Shadow Disciple":
-                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster1_damage.png"))
-                elif self.name == "Shadow Commander":
-                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster2_damage.png"))
-                elif self.name == "Volley Empress":
-                    self.damage_images.append(DamageImage(bullet.x, bullet.y, "assets/monster3_damage.png"))
-
+                self.damage_images.append(DamageImage(bullet.x, bullet.y, self.damage_img))
+                
             elif bullet.right < 0:
                 self.bullets.remove(bullet)
                 

@@ -15,7 +15,7 @@ def draw_hp(character, screen, x, y, img_x, img_y, state_img) :
     hp_ratio = character.health / character.max_health if character.max_health > 0 else 0
     pygame.draw.rect(screen, GREEN, (x, y, int(250 * hp_ratio), 30))
 
-    name = character.name if hasattr(character, "name") else "HP"
+    #name = character.name if hasattr(character, "name") else "HP"
     #name_text = font.render(f"{name} HP: {character.health}/{character.max_health}", True, WHITE)
 
     screen.blit(state_img, (img_x, img_y))

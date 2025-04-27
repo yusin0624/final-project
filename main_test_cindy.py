@@ -37,10 +37,10 @@ for i in range(5):  # 五朵雲
 projectiles = []
 player = Player(100)
 monsters = [
-    Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png"),
-    Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png"),
-    Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png"),
-    Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png"),
+    Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+    Monster("Blazing Howler", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+    Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
+    Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
 ]
 
 attack_timer = 0
@@ -84,16 +84,37 @@ def update_and_draw_game():
             monsters[current_monster].draw(screen)
             draw_hp(monsters[current_monster], screen, 950, 150, 825, -30, monsters[current_monster].state_img)
  
-def transition_phase(cloud_speed):
-    global phase, transition_timer, chapter
+def transition_phase(cloud_speed, transition_img):
+    global phase, transition_timer, chapter, transition_y, transition_direction
     
     speed = cloud_speed
     transition_timer += speed
+    
     # if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
-    if (transition_timer >= 500):
-        draw_hp(monsters[int(chapter / 2)], screen, 950, 150, 825, -30, monsters[int(chapter / 2)].state_img)
+    if transition_timer == speed:
+        transition_y = -375
+        transition_direction = "down"
 
-    if (transition_timer >= 1000):
+    # 控制 transition 移動
+    if transition_timer >= 300 and transition_timer < 800:
+        if transition_direction == "down":
+            transition_y += 675 / 500 * speed
+            if transition_y >= 300:
+                transition_y = 300
+
+    elif transition_timer >= 800 and transition_timer < 1200:
+        transition_y = 300
+
+    elif transition_timer >= 1200 and transition_timer < 1700:
+        transition_y += 675 / 500 * speed
+        if transition_y <= -375:
+            transition_y = -375
+    
+    screen.blit(transition_img, (600, transition_y))
+
+    if (transition_timer >= 800):
+        draw_hp(monsters[int(chapter / 2)], screen, 950, 150, 825, -30, monsters[int(chapter / 2)].state_img)
+    if (transition_timer >= 1700):
         transition_timer = 0
         chapter += 1
         phase = "battle"
@@ -151,7 +172,8 @@ while running:
     
     # 控制章節流程(1, 3, 5 transition; 2, 4, 6 balltle)
     if chapter % 2 != 0:
-        transition_phase(cloud_speed)
+        transition_img = monsters[int((chapter + 1) / 2)].transition_img
+        transition_phase(cloud_speed, transition_img)
     else:
         current_monster = int(chapter / 2)
         battle_phase(current_monster)
@@ -172,25 +194,25 @@ while running:
             elapsed = now - start_time
 
             # 每次都清空畫面
-            screen.fill((0 , 0 , 0))
+            screen.fill((0, 0, 0))
 
             # 逐漸增加透明度和大小
-            alpha = min(255 , elapsed // 5)  # 5毫秒增加一點點透明度
-            scale = min(1.5 , 0.5 + elapsed / 2000)  # 2秒內從 0.5x 放大到 1.5x
+            alpha = min(255, elapsed // 5)  # 5毫秒增加一點點透明度
+            scale = min(1.5, 0.5 + elapsed / 2000)  # 2秒內從 0.5x 放大到 1.5x
 
             # 動態調整字型大小
             dynamic_font_size = int(60 * scale)
-            dynamic_font = pygame.font.SysFont("couriernew" , dynamic_font_size , bold = True)
+            dynamic_font = pygame.font.SysFont("couriernew", dynamic_font_size, bold = True)
 
             # Game Over 字
-            game_over_text = dynamic_font.render("Game Over" , True , (255 , 0 , 0))
+            game_over_text = dynamic_font.render("Game Over", True, (255, 0, 0))
             game_over_text.set_alpha(alpha)
-            game_over_rect = game_over_text.get_rect(center = (WIDTH // 2 , HEIGHT // (2 - 40)))
+            game_over_rect = game_over_text.get_rect(center = (WIDTH // 2, HEIGHT // (2 - 40)))
 
             # Nothing can go wrong 字
-            nothing_text = dynamic_font.render("Nothing can go wrong..." , True , (255 , 0 , 0))
+            nothing_text = dynamic_font.render("Nothing can go wrong...", True, (255 , 0 , 0))
             nothing_text.set_alpha(alpha)
-            nothing_rect = nothing_text.get_rect(center = (WIDTH // 2 , HEIGHT // (2 + 40)))
+            nothing_rect = nothing_text.get_rect(center = (WIDTH // 2, HEIGHT // (2 + 40)))
 
             screen.blit(game_over_text, game_over_rect)
             screen.blit(nothing_text, nothing_rect)
@@ -201,7 +223,7 @@ while running:
         pygame.time.wait(3000)  # 全部出現後等 3 秒
         running = False
 
-    #draw_grid(screen, WIDTH, HEIGHT)
+    # draw_grid(screen, WIDTH, HEIGHT)
 
     pygame.display.update()
     pygame.time.delay(30)
