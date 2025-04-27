@@ -1,5 +1,11 @@
+import pygame
+import random
 from character_oh import Player
-def gameover():
+
+WIDTH, HEIGHT = 1400, 750
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+def gameover(player):
     #player.hp == 0     結束遊戲
     if player.health == 0:
         screen.fill((0, 0, 0))  # 畫面變黑

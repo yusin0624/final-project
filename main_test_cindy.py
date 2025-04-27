@@ -128,6 +128,66 @@ def battle_phase(monster):
         phase = "transition"
         chapter += 1
 
+def gameover(player):
+    if player.health == 0:
+        screen.fill((0, 0, 0))  # 畫面變黑
+
+        alpha = 0
+        scale = 0.5
+        start_time = pygame.time.get_ticks()
+
+        while alpha < 255:
+            now = pygame.time.get_ticks()
+            elapsed = now - start_time
+
+            screen.fill((0, 0, 0))
+
+            alpha = min(255, elapsed // 5)
+            scale = min(1.5, 0.5 + elapsed / 2000)
+
+            dynamic_font_size = int(60 * scale)
+            dynamic_font = pygame.font.SysFont("couriernew", dynamic_font_size, bold=True)
+
+            game_over_text = dynamic_font.render("Game Over", True, (255, 0, 0))
+            game_over_text.set_alpha(alpha)
+            game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 - 40)))
+
+            nothing_text = dynamic_font.render("Nothing can go wrong...", True, (255, 0, 0))
+            nothing_text.set_alpha(alpha)
+            nothing_rect = nothing_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 + 40)))
+
+            screen.blit(game_over_text, game_over_rect)
+            screen.blit(nothing_text, nothing_rect)
+
+            pygame.display.update()
+            pygame.time.delay(30)
+
+        # 全部出現後，停住讓玩家選擇
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:  # Enter 鍵
+                        return "restart"
+                    if event.key == pygame.K_ESCAPE:  # ESC 鍵
+                        pygame.quit()
+                        exit()
+
+            screen.fill((0, 0, 0))
+            screen.blit(game_over_text, game_over_rect)
+            screen.blit(nothing_text, nothing_rect)
+
+            hint_font = pygame.font.SysFont("couriernew", 32, bold=True)
+            hint_text = hint_font.render("Press ENTER to Restart or ESC to Quit", True, (255, 255, 255))
+            hint_rect = hint_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+            screen.blit(hint_text, hint_rect)
+
+            pygame.display.update()
+            pygame.time.delay(30)
+
 # 遊戲主迴圈
 while running:
     cloud_speed = 10
@@ -180,6 +240,29 @@ while running:
         
     # player攻擊
     player.player_attack(projectiles, screen, monsters[current_monster], 100)
+
+    #遊戲結束畫面
+    if player.health <= 0:
+        result = gameover(player)
+        if result == "restart":
+            # 重新設定初始狀態
+            player = Player(100)
+            projectiles.clear()
+            monsters = [
+                Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+                Monster("Blazing Howler", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+                Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
+                Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
+            ]
+            attack_timer = 0
+            transition_timer = 0
+            flickering_timer = 0
+            mouse_timer = 0
+            chapter = 1
+            current_monster = 0
+            phase = "transition"
+        else:
+            break  #退出遊戲
 
     # draw_grid(screen, WIDTH, HEIGHT)
 
