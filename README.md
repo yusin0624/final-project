@@ -13,3 +13,7 @@ main_test_cindy沒有狀態列，但player跟monster都會乖乖射子彈了
 在寫transition，沒transition的話可以正常對打、顯示血量、換下一關
 todo: 找好全部的monster圖片
       transition寫好
+
+0427
+要加上進度條，在transition呼叫時順便顯示進度條的變化
+我想要試試看可不可以把攻擊招式增加，會再開一個新檔案試寫
