@@ -224,17 +224,38 @@ while running:
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_q] or keys[pygame.K_e]:
+    # 音樂淡出 1 秒
+        start_volume = pygame.mixer.music.get_volume()
+        steps = 20  # 要分幾次變小，越大越滑順
+        delay_per_step = 50  # 每次間隔多少毫秒，50ms
+
+        for i in range(steps):
+            volume = start_volume * (1 - i / steps)  # 音量每次變小一點
+            pygame.mixer.music.set_volume(volume)
+            pygame.time.delay(delay_per_step)
+
+        # 保證最後音量是0
+        pygame.mixer.music.set_volume(0)
+
+        # 再跳進小遊戲
         game_over = willlly.willy()
+
         if game_over == "back_to_main":
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
 
-            # === 重新播放背景音樂 ===
-            pygame.time.delay(1000)  # 暫停1000毫秒（1秒）
-            pygame.mixer.music.load("assets/sailormusic.ogg")  # 再次載入音樂
-            pygame.mixer.music.play(loops=-1)  # 無限循環
+            # 只延遲一下下（讓小遊戲完全關閉乾淨）
+            pygame.time.delay(1000)  # 停1秒，但畫面不動，不黑屏
 
-    
+            # 播放背景音樂，音量慢慢變大
+            pygame.mixer.music.load("assets/sailormusic.ogg")
+            pygame.mixer.music.play(loops=-1)
+            pygame.mixer.music.set_volume(0)
+
+            for i in range(10):  # 把音量慢慢增加
+                pygame.mixer.music.set_volume(i / 10)
+                pygame.time.delay(100)  # 每100ms提升一點點
+
     if player.y < 220:
         player.y = 220
     if player.y > HEIGHT - 260:
