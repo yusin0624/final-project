@@ -53,7 +53,6 @@ monsters = [
     Monster("Greenfin Warden", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png"),
     Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png"),
     Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png"),
-
 ]
 
 attack_timer = 0
@@ -308,7 +307,7 @@ while running:
         else:
             break  #退出遊戲
 
-    if chapter == 19 :
+    if chapter == 18 :
         result = gameover()
         if result == "restart":
             # 重新設定初始狀態
