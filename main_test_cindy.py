@@ -199,15 +199,6 @@ def gameover(player):
             pygame.display.update()
             pygame.time.delay(30)
 
-def show_time(level_times , screen , WIDTH , HEIGHT) :
-    screen.fill((0 , 0 , 0))
-    sorted_times = sorted(level_times)
-    font = pygame.font.SysFont("couriernew" , 36 , bold = True)
-    y_offset = 100
-    title_text = font.render("Clear Times" , True , (255 , 215 , 0))
-    screen.blit(title_text , (WIDTH // 2 - title_text.get_width() // 2 , y_offset - 50))
-    for idx , time in enumerate(stored_times , 1) :
-
 # 遊戲主迴圈
 while running:
     cloud_speed = 10
