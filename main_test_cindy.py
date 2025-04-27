@@ -89,7 +89,7 @@ def transition_phase(cloud_speed):
     
     speed = cloud_speed
     transition_timer += speed
-    if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
+    # if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
     if (transition_timer >= 500):
         draw_hp(monsters[int(chapter / 2)], screen, 950, 150, 825, -30, monsters[int(chapter / 2)].state_img)
 
