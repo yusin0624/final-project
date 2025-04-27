@@ -228,6 +228,12 @@ while running:
         if game_over == "back_to_main":
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
+
+            # === 重新播放背景音樂 ===
+            pygame.time.delay(1000)  # 暫停1000毫秒（1秒）
+            pygame.mixer.music.load("assets/sailormusic.ogg")  # 再次載入音樂
+            pygame.mixer.music.play(loops=-1)  # 無限循環
+
     
     if player.y < 220:
         player.y = 220
