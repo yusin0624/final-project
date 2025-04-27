@@ -237,8 +237,8 @@ while running:
     
     if player.y < 220:
         player.y = 220
-    if player.y > HEIGHT - 260:
-        player.y = HEIGHT - 260
+    if player.y > HEIGHT - player.rect.height:
+        player.y = HEIGHT - player.rect.height
     
     mouse_pressed = pygame.mouse.get_pressed()
     if mouse_pressed[0]:  # 左鍵是 index 0
