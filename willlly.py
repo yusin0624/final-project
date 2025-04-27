@@ -85,7 +85,6 @@ def willy():
 
 def _willy_game():
     
-
     pygame.init()
     pygame.mixer.init()
 
@@ -194,10 +193,10 @@ def _willy_game():
                 sys.exit()
 
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]: player_pos[0] -= player_speed
-        if keys[pygame.K_RIGHT]: player_pos[0] += player_speed
-        if keys[pygame.K_UP]: player_pos[1] -= player_speed
-        if keys[pygame.K_DOWN]: player_pos[1] += player_speed
+        if keys[pygame.K_a]: player_pos[0] -= player_speed
+        if keys[pygame.K_d]: player_pos[0] += player_speed
+        if keys[pygame.K_w]: player_pos[1] -= player_speed
+        if keys[pygame.K_s]: player_pos[1] += player_speed
 
         player_pos[0] = max(0, min(WIDTH - 150, player_pos[0]))
         player_pos[1] = max(0, min(HEIGHT - 150, player_pos[1]))
