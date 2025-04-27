@@ -26,103 +26,96 @@ cloud_images = [
 
 # 雲朵設定（隨機選圖）
 clouds = []
-for i in range(5):  # 兩朵雲
+for i in range(5):  # 五朵雲
     clouds.append({
         "x": WIDTH + i * 500,
         "y": random.randint(30, 150),
         "img": random.choice(cloud_images)
     })
 
-# 攻擊物件列表
+# 物件列表
 projectiles = []
-
-monster1 = Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400)) 
-monster2 = Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400)) 
-monster3 = Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400)) 
-transition = Monster("Transition", 100000, 100000, 0, (-100, -100))
 player = Player(100)
+monsters = [
+    Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png"),
+    Monster("Shadow Disciple", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png"),
+    Monster("Shadow Commander", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png"),
+    Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png"),
+]
 
 attack_timer = 0
 transition_timer = 0
 flickering_timer = 0
 mouse_timer = 0
 chapter = 1
+current_monster = 0     #index
+phase = "transition"  # "transition" or "battle"
+running = True
 
-#1
-def transition1():
+def update_and_draw_game():
     global chapter
-    global current_monster
-    current_monster = transition
-    pass
+    
+    screen.blit(bg_img, (0, 0))
 
-#2
-def battle1():
-    global chapter
-    global current_monster
-    current_monster = monster1
-    monster1.attack()
-    monster1.update_movement(HEIGHT)
-    monster1.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
-    monster1.draw(screen)
-    state_img = pygame.image.load("assets/monster3_state.png")
+    # 雲朵更新
+    for cloud in clouds:
+        cloud["x"] -= cloud_speed
+        if cloud["x"] <= -150:
+            cloud["x"] = WIDTH + random.randint(0, 300)
+            cloud["y"] = random.randint(30, 150)
+            cloud["img"] = random.choice(cloud_images)
+        screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
+
+    # 玩家繪製
+    screen.blit(player.img, (player.x, player.y))
+    state_img = pygame.image.load("assets/player_state.png")
     state_img = pygame.transform.scale(state_img, (560, 280))
-    draw_hp(monster1, screen, 950, 150, 825, -30, state_img)
-    if monster1.health <= 0: chapter = 3
+    draw_hp(player, screen, 275, 155, 20, -30, state_img)
+    
+    player.player_attack(projectiles, screen, monsters[current_monster], 100)
 
-#3    
-def transition2():
-    global chapter
-    global current_monster
-    current_monster = transition
 
-#4    
-def battle2():
-    global chapter
-    global current_monster
-    current_monster = monster2
-    monster2.attack()
-    monster2.update_movement(HEIGHT)
-    monster2.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
-    monster2.draw(screen)
-    state_img = pygame.image.load("assets/monster3_state.png")
-    state_img = pygame.transform.scale(state_img, (560, 280))
-    draw_hp(monster2, screen, 950, 150, 825, -30, state_img)
+    # 怪物繪製
+    if phase == "battle":
+        if current_monster:
+            monsters[current_monster].attack()
+            monsters[current_monster].update_movement(HEIGHT)
+            monsters[current_monster].update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+            monsters[current_monster].draw(screen)
+            draw_hp(monsters[current_monster], screen, 950, 150, 825, -30, monsters[current_monster].state_img)
+ 
+def transition_phase(cloud_speed):
+    global phase, transition_timer, chapter
+    
+    speed = cloud_speed
+    transition_timer += speed
+    if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
+    if (transition_timer >= 500):
+        draw_hp(monsters[int(chapter / 2)], screen, 950, 150, 825, -30, monsters[int(chapter / 2)].state_img)
 
-#5
-def transition3():
-    global chapter
-    global current_monster
-    current_monster = transition
+    if (transition_timer >= 1000):
+        transition_timer = 0
+        chapter += 1
+        phase = "battle"
+    
+def battle_phase(monster):
+    global phase, chapter, current_monster
 
-#6
-def battle3():
-    global chapter
-    global current_monster
-    current_monster = monster3
-    monster3.attack()
-    monster3.update_movement(HEIGHT)
-    monster3.update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
-    monster3.draw(screen)
-    state_img = pygame.image.load("assets/monster3_state.png")
-    state_img = pygame.transform.scale(state_img, (560, 280))
-    draw_hp(monster3, screen, 950, 150, 825, -30, state_img)
-
-#7    
-def transition4():
-    global chapter
-    global current_monster
-    current_monster = transition
-        
+    current_monster = monster
+    if monsters[current_monster].health <= 0:
+        current_monster = 0
+        phase = "transition"
+        chapter += 1
 
 # 遊戲主迴圈
-running = True
 while running:
-    global current_monster
     cloud_speed = 10
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
+    update_and_draw_game()
     
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
@@ -143,7 +136,6 @@ while running:
         if game_over == "back_to_main":
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
-            continue
     
     if player.y < 280:
         player.y = 280
@@ -156,34 +148,16 @@ while running:
         #print("mouse pressed")
     else:
         player.grow()
-        
-    # 繪製背景
-    screen.blit(bg_img, (0, 0))
-        
-    # 更新並繪製雲朵
-    for cloud in clouds:
-        cloud["x"] -= cloud_speed
-        if cloud["x"] <= -150:
-            cloud["x"] = WIDTH + random.randint(0, 300)
-            cloud["y"] = random.randint(30, 150)
-            cloud["img"] = random.choice(cloud_images)
-        screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
-        
-    # 繪製角色
-    screen.blit(player.img, (player.x, player.y))
-    state_img = pygame.image.load("assets/player_state.png")
-    state_img = pygame.transform.scale(state_img, (560, 280))
-    draw_hp(player, screen, 275, 155, 20, -30, state_img)
-
-    if chapter == 1: transition1()
-    elif chapter == 2: battle1()
-    elif chapter == 3: transition2()
-    elif chapter == 4: battle2()
-    elif chapter == 5: transition3()
-    elif chapter == 6: battle3()
+    
+    # 控制章節流程(1, 3, 5 transition; 2, 4, 6 balltle)
+    if chapter % 2 != 0:
+        transition_phase(cloud_speed)
+    else:
+        current_monster = int(chapter / 2)
+        battle_phase(current_monster)
         
     # player攻擊
-    player.player_attack(projectiles, screen, current_monster, 100)
+    player.player_attack(projectiles, screen, monsters[current_monster], 100)
    
     #draw_grid(screen, WIDTH, HEIGHT)
 
