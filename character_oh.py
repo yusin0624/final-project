@@ -67,7 +67,7 @@ class Player:
         self.last_attack_time = 0  # 上次攻擊時間（毫秒）
         self.cooldown = 300        # 冷卻時間（300 毫秒 = 0.3 秒）
         self.max_health = 2000
-        self.health = 2000
+        self.health = 3500
         self.attack_power = attack_power
         self.x = 100
         self.y = 600 - 280 #HEIGHT = 600
