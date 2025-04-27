@@ -145,65 +145,65 @@ def battle_phase(monster):
         phase = "transition"
         chapter += 1
 
-def gameover(player):
-    if player.health == 0:
-        screen.fill((0, 0, 0))  # 畫面變黑
+def gameover():
+    screen.fill((0, 0, 0))  # 畫面變黑
 
-        alpha = 0
-        scale = 0.5
-        start_time = pygame.time.get_ticks()
+    alpha = 0
+    scale = 0.5
+    start_time = pygame.time.get_ticks()
 
-        while alpha < 255:
-            now = pygame.time.get_ticks()
-            elapsed = now - start_time
+    while alpha < 255:
+        now = pygame.time.get_ticks()
+        elapsed = now - start_time
 
-            screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0))
 
-            alpha = min(255, elapsed // 5)
-            scale = min(1.5, 0.5 + elapsed / 2000)
+        alpha = min(255, elapsed // 5)
+        scale = min(1.5, 0.5 + elapsed / 2000)
 
-            dynamic_font_size = int(60 * scale)
-            dynamic_font = pygame.font.SysFont("couriernew", dynamic_font_size, bold=True)
+        dynamic_font_size = int(60 * scale)
+        dynamic_font = pygame.font.SysFont("couriernew", dynamic_font_size, bold=True)
 
-            game_over_text = dynamic_font.render("Game Over", True, (255, 0, 0))
-            game_over_text.set_alpha(alpha)
-            game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 - 40)))
+        game_over_text = dynamic_font.render("Game Over", True, (255, 0, 0))
+        game_over_text.set_alpha(alpha)
+        game_over_rect = game_over_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 - 40)))
 
-            nothing_text = dynamic_font.render("Nothing can go wrong...", True, (255, 0, 0))
-            nothing_text.set_alpha(alpha)
-            nothing_rect = nothing_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 + 40)))
+        nothing_text = dynamic_font.render("Nothing can go wrong...", True, (255, 0, 0))
+        nothing_text.set_alpha(alpha)
+        nothing_rect = nothing_text.get_rect(center=(WIDTH // 2, HEIGHT // (2 + 40)))
 
-            screen.blit(game_over_text, game_over_rect)
-            screen.blit(nothing_text, nothing_rect)
+        screen.blit(game_over_text, game_over_rect)
+        screen.blit(nothing_text, nothing_rect)
 
-            pygame.display.update()
-            pygame.time.delay(30)
+        pygame.display.update()
+        pygame.time.delay(30)
 
-        # 全部出現後，停住讓玩家選擇
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+    # 全部出現後，停住讓玩家選擇
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Enter 鍵
+                    return "restart"
+                if event.key == pygame.K_ESCAPE:  # ESC 鍵
                     pygame.quit()
                     exit()
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:  # Enter 鍵
-                        return "restart"
-                    if event.key == pygame.K_ESCAPE:  # ESC 鍵
-                        pygame.quit()
-                        exit()
+        screen.fill((0, 0, 0))
+        screen.blit(game_over_text, game_over_rect)
+        screen.blit(nothing_text, nothing_rect)
 
-            screen.fill((0, 0, 0))
-            screen.blit(game_over_text, game_over_rect)
-            screen.blit(nothing_text, nothing_rect)
+        hint_font = pygame.font.SysFont("couriernew", 32, bold=True)
+        hint_text = hint_font.render("Press ENTER to Restart or ESC to Quit", True, (255, 255, 255))
+        hint_rect = hint_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
+        screen.blit(hint_text, hint_rect)
 
-            hint_font = pygame.font.SysFont("couriernew", 32, bold=True)
-            hint_text = hint_font.render("Press ENTER to Restart or ESC to Quit", True, (255, 255, 255))
-            hint_rect = hint_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
-            screen.blit(hint_text, hint_rect)
-
-            pygame.display.update()
-            pygame.time.delay(30)
+        pygame.display.update()
+        pygame.time.delay(30)
+    
 
 # 遊戲主迴圈
 while running:
@@ -230,11 +230,38 @@ while running:
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_q] or keys[pygame.K_e]:
+    # 音樂淡出 1 秒
+        start_volume = pygame.mixer.music.get_volume()
+        steps = 20  # 要分幾次變小，越大越滑順
+        delay_per_step = 50  # 每次間隔多少毫秒，50ms
+
+        for i in range(steps):
+            volume = start_volume * (1 - i / steps)  # 音量每次變小一點
+            pygame.mixer.music.set_volume(volume)
+            pygame.time.delay(delay_per_step)
+
+        # 保證最後音量是0
+        pygame.mixer.music.set_volume(0)
+
+        # 再跳進小遊戲
         game_over = willlly.willy()
+
         if game_over == "back_to_main":
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
-    
+
+            # 只延遲一下下（讓小遊戲完全關閉乾淨）
+            pygame.time.delay(1000)  # 停1秒，但畫面不動，不黑屏
+
+            # 播放背景音樂，音量慢慢變大
+            pygame.mixer.music.load("assets/sailormusic.ogg")
+            pygame.mixer.music.play(loops=-1)
+            pygame.mixer.music.set_volume(0)
+
+            for i in range(10):  # 把音量慢慢增加
+                pygame.mixer.music.set_volume(i / 10)
+                pygame.time.delay(100)  # 每100ms提升一點點
+
     if player.y < 220:
         player.y = 220
     if player.y > HEIGHT - player.rect.height:
@@ -260,7 +287,7 @@ while running:
 
     #遊戲結束畫面
     if player.health <= 0:
-        result = gameover(player)
+        result = gameover()
         if result == "restart":
             # 重新設定初始狀態
             player = Player(100)
@@ -280,6 +307,29 @@ while running:
             phase = "transition"
         else:
             break  #退出遊戲
+
+    if chapter == 19 :
+        result = gameover()
+        if result == "restart":
+            # 重新設定初始狀態
+            player = Player(100)
+            projectiles.clear()
+            monsters = [
+                Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+                Monster("Blazing Howler", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+                Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster3_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
+                Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
+            ]
+            attack_timer = 0
+            transition_timer = 0
+            flickering_timer = 0
+            mouse_timer = 0
+            chapter = 1
+            current_monster = 0
+            phase = "transition"
+        else:
+            break  #退出遊戲
+        
 
     # draw_grid(screen, WIDTH, HEIGHT)
 
