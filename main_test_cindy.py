@@ -4,6 +4,7 @@ import random
 from renew_state_display import draw_hp
 from draw_grid import draw_grid
 import willlly
+import math
 
 # 初始化 Pygame
 pygame.init()
@@ -51,10 +52,11 @@ chapter = 1
 current_monster = 0     #index
 phase = "transition"  # "transition" or "battle"
 running = True
+float_timer = 0  # 新增一個計時器
 
 def update_and_draw_game():
-    global chapter
-    
+    global chapter, float_timer  # <--- 加上 float_timer
+
     screen.blit(bg_img, (0, 0))
 
     # 雲朵更新
@@ -66,24 +68,27 @@ def update_and_draw_game():
             cloud["img"] = random.choice(cloud_images)
         screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
 
-    # 玩家繪製
-    screen.blit(player.img, (player.x, player.y))
+    # 玩家浮動效果
+    float_timer += 0.25
+    float_offset = math.sin(float_timer) * 8  # 上下浮動 ±10像素
+
+    # 玩家繪製（加上浮動）
+    screen.blit(player.img, (player.x, player.y + float_offset))
     state_img = pygame.image.load("assets/player_state.png")
     state_img = pygame.transform.scale(state_img, (560, 280))
     draw_hp(player, screen, 275, 155, 20, -30, state_img)
     
     player.player_attack(projectiles, screen, monsters[current_monster], 100)
 
-
     # 怪物繪製
     if phase == "battle":
         if current_monster:
             monsters[current_monster].attack()
             monsters[current_monster].update_movement(HEIGHT)
-            monsters[current_monster].update_bullets(player, screen)  # 傳遞 player_rect 參數給怪物的子彈
+            monsters[current_monster].update_bullets(player, screen)
             monsters[current_monster].draw(screen)
             draw_hp(monsters[current_monster], screen, 950, 150, 825, -30, monsters[current_monster].state_img)
- 
+
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
     
@@ -218,8 +223,8 @@ while running:
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
     
-    if player.y < 280:
-        player.y = 280
+    if player.y < 220:
+        player.y = 220
     if player.y > HEIGHT - 260:
         player.y = HEIGHT - 260
     
