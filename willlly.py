@@ -75,12 +75,14 @@ def willy_rain(screen, clock):
 
         pygame.display.flip()
 
+
 def willy():
-    # while True:
-    result = _willy_game()
-    if result == "back_to_main":
-        return "back_to_main"
-        # return "back_to_main"
+    """外部呼叫點：自動重開直到 _willy_game() 回傳 win"""
+    while True:
+        result = _willy_game()
+        if result == "win":
+            return "back_to_main"   # 成功後才真正離開
+        # 若 result == "lose" 就 continue，自動重開
 
 
 def _willy_game():
@@ -243,7 +245,7 @@ def _willy_game():
             pygame.time.wait(3000)
             # pygame.quit()
             # return True
-            return "back_to_main"
+            return "win"
 
 
 
@@ -261,7 +263,7 @@ def _willy_game():
             pygame.time.wait(3000)
             # pygame.quit()
             # return False
-            return "back_to_main"
+            return "lose"
 
 
         screen.blit(willly, willy_rect)
