@@ -92,6 +92,10 @@ def _willy_game():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
     willy_rain(screen, clock)
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load("assets/background.wav")
+    pygame.mixer.music.play(loops=-1)
+    pygame.mixer.music.set_volume(1.0)
 
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -136,7 +140,7 @@ def _willy_game():
     voice_intro = pygame.mixer.Sound("assets/catchme.wav")
     voice_ouch = pygame.mixer.Sound("assets/ouch.wav")
     voice_ouch.set_volume(1.0)  
-    pygame.mixer.music.load("assets/background.wav")
+
     voice_hit_fake = pygame.mixer.Sound("assets/fake.wav")
     voice_hit_fake.set_volume(0.5)
 
