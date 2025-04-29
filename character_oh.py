@@ -90,12 +90,13 @@ class Player:
         self.last_shrink_time = 0  # 用來紀錄上次縮小的時間
         self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
 
-    def player_attack(self, projectiles, screen, current_monster, attack_power, willy):
+    def player_attack(self, projectiles, screen, current_monster, attack_power):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
-            if willy == 0: projectile_type = random.choice(['star', 'moon'])
-            else: projectile_type = random.choice(['star', 'moon'], ["willy_bullet"])
+            #if willy == 0: 
+            projectile_type = random.choice(['star', 'moon'])
+            #else: projectile_type = random.choice(['star', 'moon'], ["willy_bullet"])
             new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
             projectiles.append(new_projectile)
             self.last_attack_time = current_time

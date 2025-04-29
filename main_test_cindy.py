@@ -288,7 +288,7 @@ while running:
         battle_phase(current_monster)
         
     # player攻擊
-    player.player_attack(projectiles, screen, monsters[current_monster], 100, willy)
+    player.player_attack(projectiles, screen, monsters[current_monster], 100)
 
     #遊戲結束畫面
     if player.health <= 0:
