@@ -1,78 +1,153 @@
 import pygame
-import player_test_cindy_oh
-import monster_test_cindy_oh
+from character_oh import Player, Monster
 import random
+from renew_state_display import draw_hp
+from draw_grid import draw_grid
+import willlly
+import math
 
-# 初始化 Pygame
-pygame.init()
+def InitGame():
+    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
+    global attack_timer, transition_timer, flickering_timer, mouse_timer
+    global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
+    
+    # 初始化 Pygame
+    pygame.init()
+    font = pygame.font.SysFont("couriernew", 28, bold=True)
+    # 背景音樂播放
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/sailormusic.ogg")  # 建議用 ogg 檔
+    pygame.mixer.music.play(loops=-1)  # -1 代表無限循環
 
-# 設定視窗大小
-WIDTH, HEIGHT = 1500, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Moon Warriors")
 
-# 載入背景圖片
-bg_img = pygame.image.load("assets/background.jpg")
-bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
+    # 設定視窗大小
+    WIDTH, HEIGHT = 1400, 750
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Moon Warriors")
 
-# 載入雲朵圖片（兩種）
-cloud_images = [
-    pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
-    pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
-]
+    # 載入背景圖片
+    bg_img = pygame.image.load("assets/background.jpg")
+    bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
-# 雲朵設定（隨機選圖）
-clouds = []
-for i in range(5):  # 兩朵雲
-    clouds.append({
-        "x": WIDTH + i * 500,
-        "y": random.randint(30, 150),
-        "img": random.choice(cloud_images)
-    })
+    # 載入雲朵圖片（兩種）
+    cloud_images = [
+        pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
+        pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
+    ]
 
-# 攻擊物件列表
-projectiles = []
+    # 雲朵設定（隨機選圖）
+    clouds = []
+    for i in range(5):  # 五朵雲
+        clouds.append({
+            "x": WIDTH + i * 500,
+            "y": random.randint(30, 150),
+            "img": random.choice(cloud_images)
+        })
 
-#前面要加上monster_test_cindy_oh是因為前面沒有寫import monster_test_cindy_oh from monster
-monster1 = monster_test_cindy_oh.Monster("Shadow Disciple", 1500, 1500, 100, (1000, HEIGHT - 200)) 
-monster2 = monster_test_cindy_oh.Monster("Shadow Commander", 2000, 2000, 150, (1000, HEIGHT - 200)) 
-monster3 = monster_test_cindy_oh.Monster("Volley Empress", 3000, 3000, 175, (1000, HEIGHT - 200)) 
+    # 物件列表
+    projectiles = []
+    player = Player(100)
+    monsters = [
+        Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
+        Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
+        Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
+        Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png"),
+        Monster("Basketball Ace", 5000, 5000, 250, (WIDTH - 500, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png"),
+        Monster("Banana Bomber", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png"),
+        Monster("Greenfin Warden", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png"),
+        Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png"),
+        Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png"),
+    ]
 
-attack_timer = 0
+    attack_timer = 0
+    transition_timer = 0
+    flickering_timer = 0
+    mouse_timer = 0
+    chapter = 1
+    current_monster = 0     #index
+    phase = "transition"  # "transition" or "battle"
+    start_page = pygame.image.load("assets/start.png")
+    screen.blit(start_page, (0, 0))
+    running = True
+    float_timer = 0  # 新增一個計時器
+    willy = 0
+    is_in_game = 0
 
-chapter = 1
+def update_and_draw_game(screen):
+    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster
 
-# 遊戲主迴圈
-running = True
-while running:
-    cloud_speed = 5
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    # 鍵盤輸入(改變玩家位置)
+    screen.blit(bg_img, (0, 0))
+    
+        # 鍵盤輸入
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_test_cindy_oh.player_y -= 5
-        player_test_cindy_oh.player_rect.topleft = (player_test_cindy_oh.player_x, player_test_cindy_oh.player_y)  # 更新 player_rect 的位置
-    if keys[pygame.K_s]:
-        player_test_cindy_oh.player_y += 5
-        player_test_cindy_oh.player_rect.topleft = (player_test_cindy_oh.player_x, player_test_cindy_oh.player_y)  # 更新 player_rect 的位置
     if keys[pygame.K_d]:
         cloud_speed = 20
-    if keys[pygame.K_a]:
+    elif keys[pygame.K_a]:
         cloud_speed = 2
+    if keys[pygame.K_w]:
+        player.y -= cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_s]:
+        player.y += cloud_speed
+        #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    if keys[pygame.K_q] or keys[pygame.K_e]:
+    # 音樂淡出 1 秒
+        start_volume = pygame.mixer.music.get_volume()
+        steps = 20  # 要分幾次變小，越大越滑順
+        delay_per_step = 50  # 每次間隔多少毫秒，50ms
 
-    if player_test_cindy_oh.player_y < 0:
-        player_test_cindy_oh.player_y = 0
-    if player_test_cindy_oh.player_y > HEIGHT - 280:
-        player_test_cindy_oh.player_y = HEIGHT - 280
+        for i in range(steps):
+            volume = start_volume * (1 - i / steps)  # 音量每次變小一點
+            pygame.mixer.music.set_volume(volume)
+            pygame.time.delay(delay_per_step)
 
-    # 繪製背景
-    screen.blit(bg_img, (0, 0))
+        # 保證最後音量是0
+        pygame.mixer.music.set_volume(0)
 
-    # 更新並繪製雲朵
+        # 再跳進小遊戲
+        game_over = willlly.willy()
+
+        if game_over == "back_to_main":
+            willy = 1
+            screen = pygame.display.set_mode((WIDTH, HEIGHT))
+            pygame.display.set_caption("Moon Warriors")
+
+            # 只延遲一下下（讓小遊戲完全關閉乾淨）
+            pygame.time.delay(1000)  # 停1秒，但畫面不動，不黑屏
+
+            # 播放背景音樂，音量慢慢變大
+            pygame.mixer.music.load("assets/sailormusic.ogg")
+            pygame.mixer.music.play(loops=-1)
+            pygame.mixer.music.set_volume(0)
+
+            for i in range(10):  # 把音量慢慢增加
+                pygame.mixer.music.set_volume(i / 10)
+                pygame.time.delay(100)  # 每100ms提升一點點
+
+    if player.y < 220:
+        player.y = 220
+    if player.y > HEIGHT - player.rect.height:
+        player.y = HEIGHT - player.rect.height
+    
+    mouse_pressed = pygame.mouse.get_pressed()
+    if mouse_pressed[0]:  # 左鍵是 index 0
+        player.shrink()
+        #print("mouse pressed")
+    else:
+        player.grow()
+    
+    # 控制章節流程(1, 3, 5 transition; 2, 4, 6 balltle)
+    if chapter % 2 != 0:
+        transition_img = monsters[int((chapter + 1) / 2)].transition_img
+        transition_phase(cloud_speed, transition_img)
+    else:
+        current_monster = int(chapter / 2)
+        battle_phase(current_monster)
+
+    # 雲朵更新
     for cloud in clouds:
         cloud["x"] -= cloud_speed
         if cloud["x"] <= -150:
@@ -81,35 +156,132 @@ while running:
             cloud["img"] = random.choice(cloud_images)
         screen.blit(cloud["img"], (cloud["x"], cloud["y"]))
 
-    # 繪製角色、怪獸
-    screen.blit(player_test_cindy_oh.player_img, (player_test_cindy_oh.player_x, player_test_cindy_oh.player_y))
-    if(chapter == 1): monster_test_cindy_oh.monster1.draw(screen)
-    if(chapter == 2): monster_test_cindy_oh.monster2.draw(screen)
+    # 玩家浮動效果
+    float_timer += 0.25
+    float_offset = math.sin(float_timer) * 8  # 上下浮動 ±10像素
 
-    # 處理攻擊
-    #player_attack.handle_attack(player_x, player_y, projectiles, screen)
-    player_test_cindy_oh.player_attack(player_test_cindy_oh.player_x, player_test_cindy_oh.player_y, projectiles)
-   
-    # 怪獸攻擊計時器
-    attack_timer += 1
-    if attack_timer % 30 == 0:  # 每 30 幀攻擊一次
-        if (chapter == 1):
-            monster_test_cindy_oh.monster1.attack()
-        elif (chapter == 2):
-            monster_test_cindy_oh.monster2.attack()
-        elif (chapter == 3):
-            monster_test_cindy_oh.monster3.attack()
+    # 玩家繪製（加上浮動）
+    screen.blit(player.img, (player.x, player.y + float_offset))
+    state_img = pygame.image.load("assets/player_state.png")
+    state_img = pygame.transform.scale(state_img, (560, 280))
+    draw_hp(player, screen, 275, 155, 20, -30, state_img)
+    
+    player.player_attack(projectiles, screen, monsters[current_monster], 100)
+
+    # 怪物繪製
+    if phase == "battle":
+        if current_monster:
+            monsters[current_monster].attack()
+            monsters[current_monster].update_movement(HEIGHT)
+            monsters[current_monster].update_bullets(player, screen)
+            monsters[current_monster].draw(screen)
+            draw_hp(monsters[current_monster], screen, 950, 150, 825, -30, monsters[current_monster].state_img)
             
-    if (chapter == 1):
-        monster_test_cindy_oh.monster1.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
-    elif (chapter == 2):
-        monster_test_cindy_oh.monster2.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
-    elif (chapter == 3):
-        monster_test_cindy_oh.monster3.update_bullets(player_test_cindy_oh.player_rect)  # 傳遞 player_rect 參數給怪物的子彈
+    #遊戲結束畫面
+    if player.health <= 0:
+        result = gameover()
+        if result == "restart":
+            InitGame()
+        else:
+            pygame.quit()
 
-    # chapter
-    if (monster_test_cindy_oh.monster1.health != 0): chapter = 1
-    elif (monster_test_cindy_oh.monster2.health != 0): chapter = 2
+    if chapter == 18 :
+        result = gameover()
+        if result == "restart":
+            InitGame()
+        else:
+            pygame.quit()        
+
+def transition_phase(cloud_speed, transition_img):
+    global phase, transition_timer, chapter, transition_y, transition_direction
+    
+    speed = cloud_speed
+    transition_timer += speed
+    
+    # if transition_timer % 10 == 0: print(f"transition_timer: {transition_timer}")
+    if transition_timer == speed:
+        transition_y = -375
+        transition_direction = "down"
+
+    # 控制 transition 移動
+    if transition_timer >= 300 and transition_timer < 800:
+        if transition_direction == "down":
+            transition_y += 675 / 500 * speed
+            if transition_y >= 300:
+                transition_y = 300
+
+    elif transition_timer >= 800 and transition_timer < 1200:
+        transition_y = 300
+
+    elif transition_timer >= 1200 and transition_timer < 1700:
+        transition_y += 675 / 500 * speed
+        if transition_y <= -375:
+            transition_y = -375
+    
+    screen.blit(transition_img, (600, transition_y))
+
+    if (transition_timer >= 800):
+        draw_hp(monsters[(chapter + 1) // 2], screen, 950, 150, 825, -30, monsters[(chapter + 1) // 2].state_img)
+    if (transition_timer >= 1700):
+        transition_timer = 0
+        chapter += 1
+        phase = "battle"
+    
+def battle_phase(monster):
+    global phase, chapter, current_monster
+
+    current_monster = monster
+    if monsters[current_monster].health <= 0:
+        current_monster = 0
+        phase = "transition"
+        chapter += 1
+
+def gameover():
+    global is_in_game
+    is_in_game = 0
+    start_page = pygame.image.load("assets/start.png")
+    screen.blit(start_page, (0, 0))
+
+    pygame.display.update()
+    pygame.time.delay(30)
+
+    # 全部出現後，停住讓玩家選擇
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # Enter 鍵
+                    InitGame()
+                    is_in_game = 1
+                    return "restart"
+                if event.key == pygame.K_ESCAPE:  # ESC 鍵
+                    pygame.quit()
+                    exit()
+        
+        pygame.display.update()
+        pygame.time.delay(30)
+
+InitGame()
+
+# 遊戲主迴圈
+while running:
+    cloud_speed = 10
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RETURN]:
+        is_in_game = 1
+    
+    if is_in_game == 1:
+        update_and_draw_game(screen)
+
+    # draw_grid(screen, WIDTH, HEIGHT)
 
     pygame.display.update()
     pygame.time.delay(30)
