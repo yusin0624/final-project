@@ -45,6 +45,9 @@ class Projectile:
         elif self.type == 'moon':
             self.image = pygame.image.load("assets/moon.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+        elif self.type == 'willy_bullet':
+            self.image = pygame.image.load("assets/willy_bullet.png")
+            self.image = pygame.transform.scale(self.image, (60, 136))
         
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
@@ -87,11 +90,12 @@ class Player:
         self.last_shrink_time = 0  # 用來紀錄上次縮小的時間
         self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
 
-    def player_attack(self, projectiles, screen, current_monster, attack_power):
+    def player_attack(self, projectiles, screen, current_monster, attack_power, willy):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
-            projectile_type = random.choice(['star', 'moon'])
+            if willy == 0: projectile_type = random.choice(['star', 'moon'])
+            else: projectile_type = random.choice(['star', 'moon'], ["willy_bullet"])
             new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
             projectiles.append(new_projectile)
             self.last_attack_time = current_time

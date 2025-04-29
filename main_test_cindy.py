@@ -66,6 +66,7 @@ start_page = pygame.image.load("assets/start.png")
 screen.blit(start_page, (0, 0))
 running = True
 float_timer = 0  # 新增一個計時器
+willy = 0
 
 def update_and_draw_game():
     global chapter, float_timer  # <--- 加上 float_timer
@@ -250,6 +251,7 @@ while running:
         game_over = willlly.willy()
 
         if game_over == "back_to_main":
+            willy = 1
             screen = pygame.display.set_mode((WIDTH, HEIGHT))
             pygame.display.set_caption("Moon Warriors")
 
@@ -286,7 +288,7 @@ while running:
         battle_phase(current_monster)
         
     # player攻擊
-    player.player_attack(projectiles, screen, monsters[current_monster], 100)
+    player.player_attack(projectiles, screen, monsters[current_monster], 100, willy)
 
     #遊戲結束畫面
     if player.health <= 0:
@@ -330,6 +332,8 @@ while running:
             chapter = 1
             current_monster = 0
             phase = "transition"
+            willy = 0
+
         else:
             break  #退出遊戲
         
