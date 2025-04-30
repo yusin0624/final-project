@@ -18,3 +18,40 @@ todo: 找好全部的monster圖片
 要加上進度條，在transition呼叫時順便顯示進度條的變化
 我想要試試看可不可以把攻擊招式增加，會再開一個新檔案試寫
 我寫了角色hp ＝ 0 會退出遊戲
+
+0430
+1. check老師的google doc (basic/advanced part)，可能現在做不完錄完影片做
+2. 我想得到的剩willy子彈還沒寫
+3. 測試，排列組合一下每個功能都要試到
+   - 被monster1～9打到（傷害數字）
+   - 打到monster1～9（傷害數字、聲音）
+   - 死在monster1～9（gameover畫面、enter回start page）
+   - victory（同上）
+   - 重開之後音樂
+   - battle/transition階段，從willy回來
+   
+   試完V
+     monster  | hit player | being attack | gameover |
+   - monster1 |      V     |      V       |     V    |
+   - monster2 |      X     |      X       |     X    |
+   - monster3 |      X     |      X       |     X    |
+   - monster4 |      X     |      X       |     X    |
+   - monster5 |      X     |      X       |     X    |
+   - monster6 |      X     |      X       |     X    |
+   - monster7 |      X     |      X       |     X    |
+   - monster8 |      X     |      X       |     X    |
+   - monster9 |      X     |      X       |     X    |
+
+   victory | X |
+
+   bgm
+   | in game | back from willy | gameover restart | victory restart |
+   |    X    |        X        |         X        |        X        |
+
+4. bug
+      - transition雲會在state上面
+
+5. 其他可以做的
+   - willy只能玩一次？多玩幾次機率up？
+   - player rect改成圓形
+   - sort：打怪獸用的時間or打怪獸用的子彈or總通關時間
