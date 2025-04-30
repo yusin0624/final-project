@@ -47,6 +47,10 @@ todo: 找好全部的monster圖片
    | in game | back from willy | gameover restart | victory restart |
    |    X    |        X        |         X        |        X        |
 
+   從willy回來
+   battle     | X |
+   transition | X |
+
 3. bug
       - transition雲會在state上面
 
