@@ -41,7 +41,7 @@ todo: 找好全部的monster圖片
    - monster8 |      V     |      V       |     V    |
    - monster9 |      V     |      V       |     V    |
 
-   victory | X | 不會跑出圖片，會直接結束畫面
+   victory | V | 好了
 
    bgm
    | in game | back from willy | gameover restart | victory restart |
@@ -59,3 +59,4 @@ todo: 找好全部的monster圖片
    - willy只能玩一次？多玩幾次機率up？
    - player rect改成圓形
    - sort：打怪獸用的時間or打怪獸用的子彈or總通關時間
+   - monster從後面跑出來，不要突然閃現

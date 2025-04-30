@@ -92,7 +92,7 @@ def update_and_draw_game():
     state_img = pygame.transform.scale(state_img, (560, 280))
     draw_hp(player, screen, 275, 155, 20, -30, state_img)
     
-    player.player_attack(projectiles, screen, monsters[current_monster], 100)
+    player.player_attack(projectiles, screen, monsters[current_monster], 500)
 
     # 怪物繪製
     if phase == "battle":

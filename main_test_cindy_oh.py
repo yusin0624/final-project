@@ -247,7 +247,9 @@ def victory():
         #gameover()
         InitGame()
     else:
-        screen.blit("assets/victory.png", (0, 0))
+        vic_img = pygame.image.load("assets/victory.png")
+        vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
+        screen.blit(vic_img, (0, 0))
 
 InitGame()
 
