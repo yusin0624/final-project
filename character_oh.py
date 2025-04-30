@@ -104,7 +104,11 @@ class Player:
             else: 
                 bullet_list = ['star', 'moon', 'willy_bullet']
                 projectile_type = random.choice(bullet_list)
-            new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
+            projectile_width = 60
+            projectile_height = 60
+            if projectile_type == 'willy_bullet':
+                projectile_height = 136  # 特例處理
+            new_projectile = Projectile(self.x + self.img.get_width() // 2 - projectile_width // 2, self.y + self.img.get_height() // 2 - projectile_height // 2, projectile_type)
             projectiles.append(new_projectile)
             self.last_attack_time = current_time
 
