@@ -48,16 +48,16 @@ def InitGame():
     projectiles = []
     player = Player(100)
     monsters = [
-        Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
-        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png"),
-        Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png"),
-        Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png"),
-        Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png"),
-        Monster("Basketball Ace", 5000, 5000, 250, (WIDTH - 500, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png"),
-        Monster("Banana Bomber", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png"),
-        Monster("Greenfin Warden", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png"),
-        Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png"),
-        Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png"),
+        Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png", "assets/gameover_2.png"),
+        Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png", "assets/gameover_3.png"),
+        Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png", "assets/gameover_4.png"),
+        Monster("Basketball Ace", 5000, 5000, 250, (WIDTH - 500, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png", "assets/gameover_5.png"),
+        Monster("Banana Bomber", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png", "assets/gameover_6.png"),
+        Monster("Greenfin Warden", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png", "assets/gameover_7.png"),
+        Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png", "assets/gameover_8.png"),
+        Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
     ]
 
     attack_timer = 0
@@ -75,11 +75,12 @@ def InitGame():
     is_in_game = 0
 
 def update_and_draw_game(screen):
-    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster
+    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game
+    cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
     
-        # 鍵盤輸入
+    # 鍵盤輸入
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
         cloud_speed = 20
@@ -179,18 +180,12 @@ def update_and_draw_game(screen):
             
     #遊戲結束畫面
     if player.health <= 0:
-        result = gameover()
-        if result == "restart":
-            InitGame()
-        else:
-            pygame.quit()
+        is_in_game = 2
+        #gameover()
 
-    if chapter == 18 :
-        result = gameover()
-        if result == "restart":
-            InitGame()
-        else:
-            pygame.quit()        
+    if monsters[9].health <= 0:
+        is_in_game = 3
+        #gameover()     
 
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
@@ -236,50 +231,57 @@ def battle_phase(monster):
         phase = "transition"
         chapter += 1
 
+"""
 def gameover():
     global is_in_game
     is_in_game = 0
-    start_page = pygame.image.load("assets/start.png")
-    screen.blit(start_page, (0, 0))
+    InitGame()
+""" 
 
-    pygame.display.update()
-    pygame.time.delay(30)
+def lose():
+    global is_in_game
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RETURN]:
+        #gameover()
+        InitGame()
+    else:
+        screen.blit(monsters[current_monster].gameover, (0, 0))
 
-    # 全部出現後，停住讓玩家選擇
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:  # Enter 鍵
-                    InitGame()
-                    is_in_game = 1
-                    return "restart"
-                if event.key == pygame.K_ESCAPE:  # ESC 鍵
-                    pygame.quit()
-                    exit()
-        
-        pygame.display.update()
-        pygame.time.delay(30)
+def victory():
+    global is_in_game
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RETURN]:
+        #gameover()
+        InitGame()
+    else:
+        screen.blit("assets/victory.png", (0, 0))
 
 InitGame()
 
 # 遊戲主迴圈
 while running:
-    cloud_speed = 10
-
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_RETURN]:
-        is_in_game = 1
-    
+
+    if keys[pygame.K_ESCAPE]:
+        pygame.quit()
+        
+    if is_in_game == 0:
+        if keys[pygame.K_RETURN]:
+            is_in_game = 1
+        
     if is_in_game == 1:
         update_and_draw_game(screen)
+    
+    elif is_in_game == 2:
+        lose()
+    
+    elif is_in_game == 3:
+        victory()
 
     # draw_grid(screen, WIDTH, HEIGHT)
 

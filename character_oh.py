@@ -89,6 +89,7 @@ class Player:
         self.original_height = 250
         self.last_shrink_time = 0  # 用來紀錄上次縮小的時間
         self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
+    
 
     def player_attack(self, projectiles, screen, current_monster, attack_power):
         current_time = pygame.time.get_ticks()
@@ -160,7 +161,7 @@ class Player:
 #############
 
 class Monster:
-    def __init__(self, name, max_health, health, attack_power, position, self_image, bullet_image, state_img, transition_img, damage_img):
+    def __init__(self, name, max_health, health, attack_power, position, self_image, bullet_image, state_img, transition_img, damage_img, gameover_img):
         self.name = name
         self.max_health = max_health
         self.health = health
@@ -186,6 +187,9 @@ class Monster:
         self.change_target_counter = 0
         self.last_attack_time = 0  # 上次攻擊時間（毫秒）
         self.cooldown = 1000        # 冷卻時間（300 毫秒 = 0.5 秒）
+        self.gameover = pygame.image.load(gameover_img)
+        self.gameover = pygame.transform.scale(self.gameover, (1400, 750))
+
     
     def draw(self, screen):
         screen.blit(self.image, self.rect)
