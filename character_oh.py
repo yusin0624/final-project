@@ -91,13 +91,15 @@ class Player:
         self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
     
 
-    def player_attack(self, projectiles, screen, current_monster, attack_power):
+    def player_attack(self, projectiles, screen, current_monster, willy):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
-            #if willy == 0: 
-            projectile_type = random.choice(['star', 'moon'])
-            #else: projectile_type = random.choice(['star', 'moon'], ["willy_bullet"])
+            if willy == 0: 
+                projectile_type = random.choice(['star', 'moon'])
+            else: 
+                bullet_list = ['star', 'moon', 'willy_bullet']
+                projectile_type = random.choice(bullet_list)
             new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
             projectiles.append(new_projectile)
             self.last_attack_time = current_time
@@ -108,7 +110,7 @@ class Player:
             projectile.draw(screen)
                     
             if projectile.rect.colliderect(current_monster.rect):
-                current_monster.health -= attack_power
+                current_monster.health -= self.attack_power
                 #print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))

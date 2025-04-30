@@ -20,9 +20,8 @@ todo: 找好全部的monster圖片
 我寫了角色hp ＝ 0 會退出遊戲
 
 0430
-1. check老師的google doc (basic/advanced part)，可能現在做不完錄完影片做
-2. 我想得到的剩willy子彈還沒寫
-3. 測試，排列組合一下每個功能都要試到
+1. willy  bullet寫好了
+2. 測試，排列組合一下每個功能都要試到
    - 被monster1～9打到（傷害數字）
    - 打到monster1～9（傷害數字、聲音）
    - 死在monster1～9（gameover畫面、enter回start page）
@@ -48,10 +47,11 @@ todo: 找好全部的monster圖片
    | in game | back from willy | gameover restart | victory restart |
    |    X    |        X        |         X        |        X        |
 
-4. bug
+3. bug
       - transition雲會在state上面
 
-5. 其他可以做的
+4. todo
+   - check老師的google doc (basic/advanced part)，可能現在做不完錄完影片做
    - willy只能玩一次？多玩幾次機率up？
    - player rect改成圓形
    - sort：打怪獸用的時間or打怪獸用的子彈or總通關時間

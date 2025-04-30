@@ -75,7 +75,7 @@ def InitGame():
     is_in_game = 0
 
 def update_and_draw_game(screen):
-    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game
+    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -167,7 +167,7 @@ def update_and_draw_game(screen):
     state_img = pygame.transform.scale(state_img, (560, 280))
     draw_hp(player, screen, 275, 155, 20, -30, state_img)
     
-    player.player_attack(projectiles, screen, monsters[current_monster], 100)
+    player.player_attack(projectiles, screen, monsters[current_monster], willy)
 
     # 怪物繪製
     if phase == "battle":
@@ -230,13 +230,6 @@ def battle_phase(monster):
         current_monster = 0
         phase = "transition"
         chapter += 1
-
-"""
-def gameover():
-    global is_in_game
-    is_in_game = 0
-    InitGame()
-""" 
 
 def lose():
     global is_in_game
