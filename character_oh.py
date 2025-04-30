@@ -35,19 +35,23 @@ class Projectile:
         self.y = y
         self.type = type  # 'star' 或 'moon'
         self.speed = 10  # 攻擊物件的速度
-        self.width = 20   # 攻擊物件的寬度
-        self.height = 20  # 攻擊物件的高度
         
         # 根據類型載入圖片
         if self.type == 'star':
             self.image = pygame.image.load("assets/star.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 60  # 攻擊物件的高度
         elif self.type == 'moon':
             self.image = pygame.image.load("assets/moon.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 60  # 攻擊物件的高度
         elif self.type == 'willy_bullet':
             self.image = pygame.image.load("assets/willy_bullet.png")
             self.image = pygame.transform.scale(self.image, (60, 136))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 136  # 攻擊物件的高度
         
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
