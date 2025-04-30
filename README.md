@@ -60,3 +60,4 @@ todo: 找好全部的monster圖片
    - player rect改成圓形
    - sort：打怪獸用的時間or打怪獸用的子彈or總通關時間
    - monster從後面跑出來，不要突然閃現
+   - 進度條
