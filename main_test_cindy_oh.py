@@ -263,7 +263,7 @@ while running:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_ESCAPE]:
-        pygame.quit()
+        running = False
         
     if is_in_game == 0:
         if keys[pygame.K_RETURN]:
