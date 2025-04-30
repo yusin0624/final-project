@@ -234,7 +234,7 @@ def _willy_game():
         if score >= goal:
             pygame.mixer.music.fadeout(1500)  #  背景音樂淡出，用1.5秒慢慢消失
 
-            gameclear_img = pygame.image.load("assets/win.jpg")
+            gameclear_img = pygame.image.load("assets/win.png")
             gameclear_img = pygame.transform.scale(gameclear_img, (WIDTH, HEIGHT))
             screen.blit(gameclear_img, (0, 0))
 
@@ -252,7 +252,7 @@ def _willy_game():
         if now - start_time > level_timer and score < goal:
             pygame.mixer.music.fadeout(1500)  # 背景音樂淡出，用1.5秒慢慢消失
 
-            gameover_img = pygame.image.load("assets/game_over.jpg")
+            gameover_img = pygame.image.load("assets/game_over.png")
             gameover_img = pygame.transform.scale(gameover_img, (WIDTH, HEIGHT))
             screen.blit(gameover_img, (0, 0))
 
