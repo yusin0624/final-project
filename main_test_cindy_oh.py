@@ -259,7 +259,7 @@ def victory():
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
 
-def traverse():
+def traverse():  
     pass
 
 def sort():
