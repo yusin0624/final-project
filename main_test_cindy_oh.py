@@ -259,6 +259,12 @@ def victory():
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
 
+def traverse():
+    pass
+
+def sort():
+    pass
+    
 InitGame()
 
 # 遊戲主迴圈
@@ -285,6 +291,10 @@ while running:
     
     elif is_in_game == 3:
         victory()
+        
+    elif is_in_game == 4:
+        traverse()
+        sort()
 
     # draw_grid(screen, WIDTH, HEIGHT)
 
