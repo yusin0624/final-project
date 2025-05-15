@@ -243,14 +243,21 @@ def lose():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        #gameover()
-        InitGame()
-    else:
-        screen.blit(monsters[current_monster].gameover, (0, 0))
-
+        is_in_game = 4
+        
 def victory():
     global is_in_game
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_RETURN]:
+        is_in_game = 4
+
+def traverse():  
+    pass
+
+def sort():
+    pass
+    
+def restart_detect():
     if keys[pygame.K_RETURN]:
         #gameover()
         InitGame()
@@ -258,12 +265,9 @@ def victory():
         vic_img = pygame.image.load("assets/victory.png")
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
+        traverse()
+        sort()
 
-def traverse():  
-    pass
-
-def sort():
-    pass
     
 InitGame()
 
@@ -293,8 +297,7 @@ while running:
         victory()
         
     elif is_in_game == 4:
-        traverse()
-        sort()
+        restart_detect()
 
     # draw_grid(screen, WIDTH, HEIGHT)
 
