@@ -11,7 +11,7 @@ def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
-    
+    global start_time, end_time
     # 初始化 Pygame
     pygame.init()
     font = pygame.font.SysFont("couriernew", 28, bold=True)
@@ -78,6 +78,7 @@ def InitGame():
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
+    global start_time, end_time
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -189,10 +190,13 @@ def update_and_draw_game(screen):
             
     #遊戲結束畫面
     if player.health <= 0:
+        
+        end_time = time.time()
         is_in_game = 2
         #gameover()
 
     if monsters[9].health <= 0:
+        end_time = time.time()
         is_in_game = 3
         #gameover()     
 
@@ -255,24 +259,26 @@ def victory():
 def traverse():  
     pass
 
-
 # 成績資料
 moon_warriors_score = []
 moon_warriors_score = [
     {"name": "Joy", "time": 785},
     {"name": "Roe", "time": 358},
     {"name": "Cindy", "time": 266},
-    {"name": "Wendy", "time": 1000},
+    {"name": "Wendy", "time": 30},
 ]
 
 def show_leaderboard(moon_warriors_score, start_time, end_time):
 
-    screen.fill((0, 0, 0)) # 轉換頁面 #黑色
-    title = font.render("leaderboard", True, (225, 225, 0)) # 黃色
-    screen.blit(title, (140, 20))
+    # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
+    title = font.render("LEADERBOARD", True, (225, 225, 0)) # 黃色
+    screen.blit(title, (450, 20))
 
     # 新增玩家成績
-    moon_warriors_score.append({"name": "Player", "time": end_time-start_time})
+    if not any(score["name"] == "Player" for score in moon_warriors_score):
+        player_score = end_time - start_time
+        moon_warriors_score.append({"name": "Player", "time": player_score})
+
     # 排序
     moon_warriors_score.sort(key=lambda x: x["time"])
 
@@ -281,7 +287,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time):
         time_str = f"{playerrr['time']:.2f}"
         text = f"{i+1}. {playerrr['name']} - {time_str}s"
         line = font.render(text, True, (255, 255, 255))
-        screen.blit(line, (150, 70 + i*40))
+        screen.blit(line, (450, 70 + i*100))
 
     pygame.display.flip()
     
@@ -295,7 +301,7 @@ def restart_detect():
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
         traverse()
-        show_leaderboard(moon_warriors_score, start_time, end_time)
+        # show_leaderboard(moon_warriors_score, start_time, end_time)
     
 InitGame()
 
@@ -313,22 +319,24 @@ while running:
         running = False
         
     if is_in_game == 0:
+        start_time = time.time()
         if keys[pygame.K_RETURN]:
             is_in_game = 1
         
     if is_in_game == 1:
-        start_time = time.time()
+       
         update_and_draw_game(screen)
     
     elif is_in_game == 2:
-        end_time = time.time()
+        show_leaderboard(moon_warriors_score, start_time, end_time)
         lose()
     
     elif is_in_game == 3:
-        end_time = time.time()
+        # show_leaderboard(moon_warriors_score, start_time, end_time)
         victory()
         
     elif is_in_game == 4:
+        # show_leaderboard(moon_warriors_score, start_time, end_time)
         restart_detect()
 
     # draw_grid(screen, WIDTH, HEIGHT)
