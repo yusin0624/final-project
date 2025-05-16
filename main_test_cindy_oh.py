@@ -5,6 +5,7 @@ from renew_state_display import draw_hp
 from draw_grid import draw_grid
 import willlly
 import math
+import time
 
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
