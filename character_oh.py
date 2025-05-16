@@ -35,19 +35,23 @@ class Projectile:
         self.y = y
         self.type = type  # 'star' 或 'moon'
         self.speed = 10  # 攻擊物件的速度
-        self.width = 20   # 攻擊物件的寬度
-        self.height = 20  # 攻擊物件的高度
         
         # 根據類型載入圖片
         if self.type == 'star':
             self.image = pygame.image.load("assets/star.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 60  # 攻擊物件的高度
         elif self.type == 'moon':
             self.image = pygame.image.load("assets/moon.png")
             self.image = pygame.transform.scale(self.image, (60, 60))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 60  # 攻擊物件的高度
         elif self.type == 'willy_bullet':
             self.image = pygame.image.load("assets/willy_bullet.png")
             self.image = pygame.transform.scale(self.image, (60, 136))
+            self.width = 60   # 攻擊物件的寬度
+            self.height = 136  # 攻擊物件的高度
         
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
 
@@ -68,14 +72,14 @@ class Projectile:
         return self.x > width  # 如果攻擊物件超過畫面邊緣，返回 True        
 
 class Player:
-    def __init__(self, attack_power):
+    def __init__(self, attack_power, x):
         self.name = "player"
         self.last_attack_time = 0  # 上次攻擊時間（毫秒）
         self.cooldown = 300        # 冷卻時間（300 毫秒 = 0.3 秒）
         self.max_health = 2000
         self.health = 2000
         self.attack_power = attack_power
-        self.x = 100
+        self.x = x
         self.y = 600 - 280 #HEIGHT = 600
         # 載入角色圖片
         self.img = pygame.image.load("assets/player.png")
@@ -83,6 +87,8 @@ class Player:
         #self.rect = self.img.get_rect(topleft=(self.x + 200, self.y + 200))
         self.rect = pygame.Rect(self.x - 20, self.y + 20, self.img.get_width() - 60, self.img.get_height() - 60)
         self.damage_images = []
+        self.state = pygame.image.load("assets/player_state.png")
+        self.state = pygame.transform.smoothscale(self.state, (560, 280))
         
         self.original_image = pygame.image.load("assets/player.png").convert_alpha()
         self.original_width = 250
@@ -100,7 +106,11 @@ class Player:
             else: 
                 bullet_list = ['star', 'moon', 'willy_bullet']
                 projectile_type = random.choice(bullet_list)
-            new_projectile = Projectile(self.x + 100, self.y + 80, projectile_type)
+            projectile_width = 60
+            projectile_height = 60
+            if projectile_type == 'willy_bullet':
+                projectile_height = 136  # 特例處理
+            new_projectile = Projectile(self.x + self.img.get_width() // 2 - projectile_width // 2, self.y + self.img.get_height() // 2 - projectile_height // 2, projectile_type)
             projectiles.append(new_projectile)
             self.last_attack_time = current_time
 
@@ -172,7 +182,7 @@ class Monster:
         self.bullet_img = pygame.image.load(bullet_image)
         self.bullet_img = pygame.transform.scale(self.bullet_img, (60, 60))
         self.state_img = pygame.image.load(state_img)
-        self.state_img = pygame.transform.scale(self.state_img, (560, 280))
+        self.state_img = pygame.transform.smoothscale(self.state_img, (560, 280))
         self.transition_img = pygame.image.load(transition_img)
         self.transition_img = pygame.transform.scale(self.transition_img, (560, 280))
         self.damage_img = damage_img
@@ -243,7 +253,7 @@ class Monster:
             elif keys[pygame.K_a]:
                 bullet.x -= 5
             else:
-                bullet.x -= 10  # 火球向左移動
+                bullet.x -= 10
             if bullet.colliderect(player.rect):
                 player.health -= self.attack_power
                 # print(f"{player.health} 玩家目前血量")
