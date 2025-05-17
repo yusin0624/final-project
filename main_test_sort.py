@@ -75,6 +75,7 @@ def InitGame():
     float_timer = 0  # 新增一個計時器
     willy = 0
     is_in_game = 0
+    find_willy = 0
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
@@ -287,7 +288,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
     if find_willy != 1:
         
         for j, playerrr in enumerate(moon_warriors_score[:5]):
-            if playerrr["name"] == "player" and j != 5:
+            if playerrr["name"] == "Player" and j != 5:
                 moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
                 
 
