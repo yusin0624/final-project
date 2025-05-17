@@ -100,6 +100,8 @@ class Player:
     def player_attack(self, projectiles, screen, current_monster, willy):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
+        hit = False  # ✅ 新增：紀錄是否命中怪物
+
         if keys[pygame.K_SPACE] and current_time - self.last_attack_time > self.cooldown:
             if willy == 0: 
                 projectile_type = random.choice(['star', 'moon'])
@@ -110,7 +112,11 @@ class Player:
             projectile_height = 60
             if projectile_type == 'willy_bullet':
                 projectile_height = 136  # 特例處理
-            new_projectile = Projectile(self.x + self.img.get_width() // 2 - projectile_width // 2, self.y + self.img.get_height() // 2 - projectile_height // 2, projectile_type)
+            new_projectile = Projectile(
+                self.x + self.img.get_width() // 2 - projectile_width // 2,
+                self.y + self.img.get_height() // 2 - projectile_height // 2,
+                projectile_type
+            )
             projectiles.append(new_projectile)
             self.last_attack_time = current_time
 
@@ -118,23 +124,27 @@ class Player:
             projectile.move()
             projectile.rect = pygame.Rect(projectile.x, projectile.y, projectile.width, projectile.height)
             projectile.draw(screen)
-                    
+                
             if projectile.rect.colliderect(current_monster.rect):
                 current_monster.health -= self.attack_power
-                #print(f"{current_monster.health} monster1目前血量")
                 projectiles.remove(projectile)
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
                 voice_player_music = pygame.mixer.Sound("assets/player_attack_music.wav")
                 voice_player_music.play()
-                
+                print("Hit monster!")
+
+                hit = True  # ✅ 新增：成功命中
             elif projectile.is_off_screen(1500):
                 projectiles.remove(projectile)
-        
+    
         for dmg in self.damage_images[:]:
-                dmg.update()
-                dmg.draw(screen)
-                if dmg.is_expired():
-                    self.damage_images.remove(dmg)
+            dmg.update()
+            dmg.draw(screen)
+            if dmg.is_expired():
+                self.damage_images.remove(dmg)
+
+        return hit  # ✅ 新增：回傳是否命中
+
                     
     def shrink(self):
         current_time = pygame.time.get_ticks()
