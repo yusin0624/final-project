@@ -5,7 +5,11 @@ from renew_state_display import draw_hp
 from draw_grid import draw_grid
 import willlly
 import math
+<<<<<<< HEAD
 from greeny_effect import GreenyEffect
+=======
+import time
+>>>>>>> 9b6339b4b713f9b25037578e9854d4579f7a297b
 
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
@@ -30,7 +34,7 @@ def InitGame():
     pygame.display.set_caption("Moon Warriors")
 
     # 載入背景圖片
-    bg_img = pygame.image.load("assets/background.jpg")
+    bg_img = pygame.image.load("assets/background.jpeg")
     bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
 
     # 載入雲朵圖片（兩種）
@@ -52,10 +56,11 @@ def InitGame():
 
     # 物件列表
     projectiles = []
-    player = Player(100)
+    player = Player(100, -250)
     monsters = [
         Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
-        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        #Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH - 500, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH + 150, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
         Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png", "assets/gameover_2.png"),
         Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png", "assets/gameover_3.png"),
         Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png", "assets/gameover_4.png"),
@@ -81,9 +86,13 @@ def InitGame():
     is_in_game = 0
 
 def update_and_draw_game(screen):
+<<<<<<< HEAD
     global font
 
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy
+=======
+    global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
+>>>>>>> 9b6339b4b713f9b25037578e9854d4579f7a297b
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -140,6 +149,14 @@ def update_and_draw_game(screen):
                 pygame.mixer.music.set_volume(i / 10)
                 pygame.time.delay(100)  # 每100ms提升一點點
 
+    if player.x < 100:
+        player.x += cloud_speed
+        player.rect.topleft = (player.x - 20, player.y + 20)
+    #print(player.x)
+    
+    if monsters[current_monster].rect.x > (WIDTH - 500):
+        monsters[current_monster].rect.x -= cloud_speed
+        
     if player.y < 220:
         player.y = 220
     if player.y > HEIGHT - player.rect.height:
@@ -162,6 +179,7 @@ def update_and_draw_game(screen):
 
     # 雲朵更新
     for cloud in clouds:
+        #if chapter % 2 != 0 and monsters[current_monster].rect.x > (WIDTH - 500):
         cloud["x"] -= cloud_speed
         if cloud["x"] <= -150:
             cloud["x"] = WIDTH + random.randint(0, 300)
@@ -175,9 +193,7 @@ def update_and_draw_game(screen):
 
     # 玩家繪製（加上浮動）
     screen.blit(player.img, (player.x, player.y + float_offset))
-    state_img = pygame.image.load("assets/player_state.png")
-    state_img = pygame.transform.scale(state_img, (560, 280))
-    draw_hp(player, screen, 275, 155, 20, -30, state_img)
+    draw_hp(player, screen, 275, 155, 20, -30, player.state)
     
     hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
     if hit:
@@ -250,14 +266,21 @@ def lose():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        #gameover()
-        InitGame()
-    else:
-        screen.blit(monsters[current_monster].gameover, (0, 0))
-
+        is_in_game = 4
+        
 def victory():
     global is_in_game
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_RETURN]:
+        is_in_game = 4
+
+def traverse():  
+    pass
+
+def sort():
+    pass
+    
+def restart_detect():
     if keys[pygame.K_RETURN]:
         #gameover()
         InitGame()
@@ -265,7 +288,10 @@ def victory():
         vic_img = pygame.image.load("assets/victory.png")
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
+        traverse()
+        sort()
 
+    
 InitGame()
 
 # 遊戲主迴圈
@@ -292,6 +318,9 @@ while running:
     
     elif is_in_game == 3:
         victory()
+        
+    elif is_in_game == 4:
+        restart_detect()
 
     # draw_grid(screen, WIDTH, HEIGHT)
 
