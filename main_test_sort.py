@@ -11,7 +11,7 @@ def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
-    global start_time, end_time
+    global start_time, end_time, find_willy
     # 初始化 Pygame
     pygame.init()
     font = pygame.font.SysFont("couriernew", 28, bold=True)
@@ -78,7 +78,7 @@ def InitGame():
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
-    global start_time, end_time
+    global start_time, end_time, find_willy
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -98,7 +98,8 @@ def update_and_draw_game(screen):
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
         player.rect.topleft = (player.x - 20, player.y + 20)
     if keys[pygame.K_q] or keys[pygame.K_e]:
-    # 音樂淡出 1 秒
+        find_willy = 1 # 有玩 willy
+        # 音樂淡出 1 秒
         start_volume = pygame.mixer.music.get_volume()
         steps = 20  # 要分幾次變小，越大越滑順
         delay_per_step = 50  # 每次間隔多少毫秒，50ms
@@ -268,7 +269,7 @@ moon_warriors_score = [
     {"name": "Wendy", "time": 30},
 ]
 
-def show_leaderboard(moon_warriors_score, start_time, end_time):
+def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
 
     # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
     title = font.render("LEADERBOARD", True, (225, 225, 0)) # 黃色
@@ -281,6 +282,14 @@ def show_leaderboard(moon_warriors_score, start_time, end_time):
 
     # 排序
     moon_warriors_score.sort(key=lambda x: x["time"])
+
+    # 沒找到威力，排名下降一位
+    if find_willy != 1:
+        
+        for j, playerrr in enumerate(moon_warriors_score[:5]):
+            if playerrr["name"] == "player" and j != 5:
+                moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
+                
 
     # 把記分板印出來
     for i, playerrr in enumerate(moon_warriors_score[:5]):
@@ -301,7 +310,7 @@ def restart_detect():
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
         traverse()
-        # show_leaderboard(moon_warriors_score, start_time, end_time)
+        # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
     
 InitGame()
 
@@ -328,7 +337,7 @@ while running:
         update_and_draw_game(screen)
     
     elif is_in_game == 2:
-        show_leaderboard(moon_warriors_score, start_time, end_time)
+        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
         lose()
     
     elif is_in_game == 3:
