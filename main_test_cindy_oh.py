@@ -281,7 +281,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
         player_score = end_time - start_time
         moon_warriors_score.append({"name": "Player", "time": player_score})
 
-    # 排序
+    # 排序(依據時間)，要改成先算打幾個怪，再比時間
     moon_warriors_score.sort(key=lambda x: x["time"])
 
     # 沒找到威力，排名下降一位
