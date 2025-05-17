@@ -188,6 +188,7 @@ def update_and_draw_game(screen):
     hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
     if hit:
         greeny.register_attack()
+    greeny.update_and_draw(screen)
 
 
     # 怪物繪製
