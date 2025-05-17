@@ -5,11 +5,15 @@ from renew_state_display import draw_hp
 from draw_grid import draw_grid
 import willlly
 import math
+from greeny_effect import GreenyEffect
 
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
+    global greeny
+
+
     
     # 初始化 Pygame
     pygame.init()
@@ -34,6 +38,8 @@ def InitGame():
         pygame.transform.scale(pygame.image.load("assets/cloud1.png"), (225, 135)),
         pygame.transform.scale(pygame.image.load("assets/cloud2.png"), (225, 135))
     ]
+    #載入綠頭魚
+    greeny = GreenyEffect("assets/greeny.png", WIDTH, HEIGHT)
 
     # 雲朵設定（隨機選圖）
     clouds = []
@@ -75,10 +81,16 @@ def InitGame():
     is_in_game = 0
 
 def update_and_draw_game(screen):
+    global font
+
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
+    greeny.update_and_draw(screen)
+
+
+
     
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
@@ -167,7 +179,10 @@ def update_and_draw_game(screen):
     state_img = pygame.transform.scale(state_img, (560, 280))
     draw_hp(player, screen, 275, 155, 20, -30, state_img)
     
-    player.player_attack(projectiles, screen, monsters[current_monster], willy)
+    hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
+    if hit:
+        greeny.register_attack()
+
 
     # 怪物繪製
     if phase == "battle":
