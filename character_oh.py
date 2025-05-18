@@ -98,7 +98,7 @@ class Player:
         self.score = 0
     
 
-    def player_attack(self, projectiles, screen, current_monster, willy, count_battle_monster):
+    def player_attack(self, projectiles, screen, current_monster, willy):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         hit = False  # ✅ 新增：紀錄是否命中怪物

@@ -180,7 +180,7 @@ def update_and_draw_game(screen):
     screen.blit(player.img, (player.x, player.y + float_offset))
     draw_hp(player, screen, 275, 155, 20, -30, player.state)
     
-    player.player_attack(projectiles, screen, monsters[current_monster], willy, count_battle_monster)
+    player.player_attack(projectiles, screen, monsters[current_monster], willy)
 
     # 怪物繪製
     if phase == "battle":

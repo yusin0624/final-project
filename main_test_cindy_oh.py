@@ -274,38 +274,38 @@ def traverse():
 # 成績資料
 moon_warriors_score = []
 moon_warriors_score = [
-    {"name": "Joy", "time": 785},
-    {"name": "Roe", "time": 358},
-    {"name": "Cindy", "time": 266},
-    {"name": "Wendy", "time": 30},
+    {"name": "Joy", "score": 1243, "time": 95},
+    {"name": "Zoe", "score": 39500, "time": 398},
+    {"name": "Cindy", "score": 29870, "time": 266},
+    {"name": "Wendy", "score": 16340, "time": 120},
 ]
 
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
-
+    global player
     # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
-    title = font.render("LEADERBOARD", True, (225, 225, 0)) # 黃色
+    title = font.render("RANKING", True, (225, 225, 0)) # 黃色
     screen.blit(title, (450, 20))
 
     # 新增玩家成績
     if not any(score["name"] == "Player" for score in moon_warriors_score):
-        player_score = end_time - start_time
-        moon_warriors_score.append({"name": "Player", "time": player_score})
+        player_score_time = end_time - start_time
+        moon_warriors_score.append({"name": "Player", "score": player.score, "time": player_score_time})
 
     # 排序(依據時間)，要改成先算打幾個怪，再比時間
-    moon_warriors_score.sort(key=lambda x: x["time"])
+    moon_warriors_score.sort(key=lambda x: (-x["score"], x["time"]))
 
     # 沒找到威力，排名下降一位
     if find_willy != 1:
         
         for j, playerrr in enumerate(moon_warriors_score[:5]):
-            if playerrr["name"] == "Player" and j != 5:
+            if playerrr["name"] == "Player" and j < 4:
                 moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
                 
 
     # 把記分板印出來
     for i, playerrr in enumerate(moon_warriors_score[:5]):
         time_str = f"{playerrr['time']:.2f}"
-        text = f"{i+1}. {playerrr['name']} - {time_str}s"
+        text = f"{i+1}. {playerrr['name']} - {playerrr['score']} - {time_str}s"
         line = font.render(text, True, (255, 255, 255))
         screen.blit(line, (450, 70 + i*100))
 
