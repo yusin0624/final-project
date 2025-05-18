@@ -76,10 +76,11 @@ def InitGame():
     willy = 0
     is_in_game = 0
     find_willy = 0
+    count_battle_monster = 0
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
-    global start_time, end_time, find_willy
+    global start_time, end_time, find_willy, count_battle_monster
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -179,7 +180,7 @@ def update_and_draw_game(screen):
     screen.blit(player.img, (player.x, player.y + float_offset))
     draw_hp(player, screen, 275, 155, 20, -30, player.state)
     
-    player.player_attack(projectiles, screen, monsters[current_monster], willy)
+    player.player_attack(projectiles, screen, monsters[current_monster], willy, count_battle_monster)
 
     # 怪物繪製
     if phase == "battle":
@@ -239,8 +240,9 @@ def transition_phase(cloud_speed, transition_img):
     
 def battle_phase(monster):
     global phase, chapter, current_monster, count_battle_monster
-    count_battle_monster = monster
+    
     current_monster = monster
+    # count_battle_monster += monsters[current_monster].max_health
     if monsters[current_monster].health <= 0:
         current_monster = 0
         phase = "transition"
@@ -265,22 +267,22 @@ def traverse():
 # 成績資料
 moon_warriors_score = []
 moon_warriors_score = [
-    {"name": "Joy", "score": 1, "time": 785},
-    {"name": "Zoe", "score": 4, "time": 358},
-    {"name": "Cindy", "score": 6, "time": 266},
-    {"name": "Wendy", "score": 9, "time": 30},
+    {"name": "Joy", "score": 1243, "time": 95},
+    {"name": "Zoe", "score": 39500, "time": 398},
+    {"name": "Cindy", "score": 29870, "time": 266},
+    {"name": "Wendy", "score": 16340, "time": 120},
 ]
 
-def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, count_battle_monster):
-
+def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
+    global player
     # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
-    title = font.render("LEADERBOARD", True, (225, 225, 0)) # 黃色
+    title = font.render("RANKING", True, (255, 255, 0)) 
     screen.blit(title, (450, 20))
 
     # 新增玩家成績
     if not any(score["name"] == "Player" for score in moon_warriors_score):
-        player_score = end_time - start_time
-        moon_warriors_score.append({"name": "Player", "score": count_battle_monster, "time": player_score})
+        player_score_time = end_time - start_time
+        moon_warriors_score.append({"name": "Player", "score": player.score, "time": player_score_time})
 
     # 排序(依據時間)，要改成先算打幾個怪，再比時間(o)
     # 新的問題 : 如果擊敗的怪獸數量一樣多勒
@@ -290,7 +292,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, coun
     if find_willy != 1:
         
         for j, playerrr in enumerate(moon_warriors_score[:5]):
-            if playerrr["name"] == "Player" and j != 5:
+            if playerrr["name"] == "Player" and j < 4:
                 moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
                 break
 
@@ -340,7 +342,7 @@ while running:
         update_and_draw_game(screen)
     
     elif is_in_game == 2:
-        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, count_battle_monster)
+        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
         lose()
     
     elif is_in_game == 3:

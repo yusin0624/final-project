@@ -95,9 +95,10 @@ class Player:
         self.original_height = 250
         self.last_shrink_time = 0  # 用來紀錄上次縮小的時間
         self.shrink_interval = 70  # 每次縮小的最短時間間隔 (毫秒)
+        self.score = 0
     
 
-    def player_attack(self, projectiles, screen, current_monster, willy):
+    def player_attack(self, projectiles, screen, current_monster, willy, count_battle_monster):
         current_time = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
         hit = False  # ✅ 新增：紀錄是否命中怪物
@@ -127,6 +128,7 @@ class Player:
                 
             if projectile.rect.colliderect(current_monster.rect):
                 current_monster.health -= self.attack_power
+                self.score += self.attack_power # 計算打了多少血量
                 projectiles.remove(projectile)
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
                 voice_player_music = pygame.mixer.Sound("assets/player_attack_music.wav")
