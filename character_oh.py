@@ -133,7 +133,6 @@ class Player:
                 self.damage_images.append(DamageImage(projectile.x, projectile.y, "assets/player_damage.png"))
                 voice_player_music = pygame.mixer.Sound("assets/player_attack_music.wav")
                 voice_player_music.play()
-                print("Hit monster!")
 
                 hit = True  # ✅ 新增：成功命中
             elif projectile.is_off_screen(1500):
