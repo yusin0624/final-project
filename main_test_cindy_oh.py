@@ -28,12 +28,12 @@ def InitGame():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Moon Warriors")
 
-    # 玩家輸入名稱
-    player_name = input_player_name()
-
     # 載入背景圖片
     bg_img = pygame.image.load("assets/background.jpeg")
     bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
+
+    # 玩家輸入名稱
+    player_name = input_player_name()
 
     # 載入雲朵圖片（兩種）
     cloud_images = [
@@ -297,7 +297,7 @@ def input_player_name():
                     if len(name) < 20:  # 最多20個字
                         name += event.unicode  # 加入輸入的字元
 
-        screen.fill((0, 0, 0))
+        # screen.fill((0, 0, 0))
         prompt = font_input.render("Enter your name:", True, (255, 255, 255))
         screen.blit(prompt, (200, 150))
 
@@ -310,7 +310,7 @@ def input_player_name():
         pygame.display.flip()
         pygame.time.delay(30)
 
-    pygame.time.delay(30)
+    pygame.time.delay(10)
     return name if name else "Player"
 
 # 成績資料
@@ -340,7 +340,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
     if find_willy != 1:
         
         for j, playerrr in enumerate(moon_warriors_score[:5]):
-            if playerrr["name"] == "Player" and j < 4:
+            if playerrr["name"] == player_name and j < 4:
                 moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
                 
 
