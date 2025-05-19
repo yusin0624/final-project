@@ -11,7 +11,7 @@ def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
-    global start_time, end_time, find_willy, count_battle_monster
+    global start_time, end_time, find_willy, player_name
     # 初始化 Pygame
     pygame.init()
     font = pygame.font.SysFont("couriernew", 28, bold=True)
@@ -25,6 +25,9 @@ def InitGame():
     WIDTH, HEIGHT = 1400, 750
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Moon Warriors")
+
+    # 玩家輸入名稱
+    player_name = input_player_name()
 
     # 載入背景圖片
     bg_img = pygame.image.load("assets/background.jpeg")
@@ -80,7 +83,7 @@ def InitGame():
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
-    global start_time, end_time, find_willy, count_battle_monster
+    global start_time, end_time, find_willy
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -239,10 +242,10 @@ def transition_phase(cloud_speed, transition_img):
         phase = "battle"
     
 def battle_phase(monster):
-    global phase, chapter, current_monster, count_battle_monster
+    global phase, chapter, current_monster
     
     current_monster = monster
-    # count_battle_monster += monsters[current_monster].max_health
+    
     if monsters[current_monster].health <= 0:
         current_monster = 0
         phase = "transition"
@@ -250,7 +253,6 @@ def battle_phase(monster):
 
 def lose():
     global is_in_game, count_battle_monster
-    count_battle_monster-1
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
         is_in_game = 4
@@ -264,6 +266,44 @@ def victory():
 def traverse():  
     pass
 
+def input_player_name():
+    name = ""
+    active = True
+    input_rect = pygame.Rect(200, 200, 400, 50)
+    color_active = pygame.Color('lightskyblue3')
+    font_input = pygame.font.Font(None, 48)
+
+    while active:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    active = False  # 輸入完成
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]  # 刪除最後一個字
+                else:
+                    if len(name) < 10:  # 最多10個字
+                        name += event.unicode  # 加入輸入的字元
+
+        screen.fill((0, 0, 0))
+        prompt = font_input.render("Enter your name:", True, (255, 255, 255))
+        screen.blit(prompt, (200, 150))
+
+        txt_surface = font_input.render(name, True, (255, 255, 255))
+        width = max(400, txt_surface.get_width() + 10)
+        input_rect.w = width
+        pygame.draw.rect(screen, color_active, input_rect, 2)
+        screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
+
+        pygame.display.flip()
+        pygame.time.delay(30)
+
+    pygame.time.delay(30)
+    return name if name else "Player"
+
 # 成績資料
 moon_warriors_score = []
 moon_warriors_score = [
@@ -273,16 +313,16 @@ moon_warriors_score = [
     {"name": "Wendy", "score": 16340, "time": 120},
 ]
 
-def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
+def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
     # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
     title = font.render("RANKING", True, (255, 255, 0)) 
     screen.blit(title, (450, 20))
 
     # 新增玩家成績
-    if not any(score["name"] == "Player" for score in moon_warriors_score):
+    if not any(score["name"] == player_name for score in moon_warriors_score):
         player_score_time = end_time - start_time
-        moon_warriors_score.append({"name": "Player", "score": player.score, "time": player_score_time})
+        moon_warriors_score.append({"name": player_name, "score": player.score, "time": player_score_time})
 
     # 排序(依據時間)，要改成先算打幾個怪，再比時間(o)
     # 新的問題 : 如果擊敗的怪獸數量一樣多勒
@@ -305,6 +345,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy):
 
     pygame.display.flip()
     
+
     
 def restart_detect():
     if keys[pygame.K_RETURN]:
@@ -342,7 +383,7 @@ while running:
         update_and_draw_game(screen)
     
     elif is_in_game == 2:
-        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
+        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name)
         lose()
     
     elif is_in_game == 3:
