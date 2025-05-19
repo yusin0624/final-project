@@ -191,7 +191,6 @@ def update_and_draw_game(screen):
     hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
     if hit:
         greeny.register_attack()
-    greeny.update_and_draw(screen)
 
 
     # 怪物繪製
@@ -213,7 +212,11 @@ def update_and_draw_game(screen):
     if monsters[9].health <= 0:
         end_time = time.time()
         is_in_game = 3
-        #gameover()     
+        #gameover()
+    greeny.update_and_draw(screen)
+    hit_text = font.render(f"Hit Count: {greeny.attack_count}", True, (255, 0, 0))
+    screen.blit(hit_text, (30, 30))
+     
 
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
