@@ -7,6 +7,7 @@ import willlly
 import math
 import time
 from greeny_effect import GreenyEffect
+
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
