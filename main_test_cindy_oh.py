@@ -9,7 +9,7 @@ import time
 from greeny_effect import GreenyEffect
 
 def InitGame():
-    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, succes_images, fail_images
+    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, success_images, fail_images
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
     global start_time, end_time, find_willy, player_name
@@ -72,17 +72,17 @@ def InitGame():
         Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
     ]
 
-    succes_images = [
+    success_images = [
         None,
-        pygame.image.load("assets/monster1_succes.png"),
-        pygame.image.load("assets/monster2_succes.png"),
-        pygame.image.load("assets/monster3_succes.png"),
-        pygame.image.load("assets/monster4_succes.png"),
-        pygame.image.load("assets/monster5_succes.png"),
-        pygame.image.load("assets/monster6_succes.png"),
-        pygame.image.load("assets/monster7_succes.png"),
-        pygame.image.load("assets/monster8_succes.png"),
-        pygame.image.load("assets/monster9_succes.png"),
+        pygame.image.load("assets/monster1_success.png"),
+        pygame.image.load("assets/monster2_success.png"),
+        pygame.image.load("assets/monster3_success.png"),
+        pygame.image.load("assets/monster4_success.png"),
+        pygame.image.load("assets/monster5_success.png"),
+        pygame.image.load("assets/monster6_success.png"),
+        pygame.image.load("assets/monster7_success.png"),
+        pygame.image.load("assets/monster8_success.png"),
+        pygame.image.load("assets/monster9_success.png"),
     ]
 
     fail_images = [
@@ -426,7 +426,7 @@ def restart_detect():
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
         results = traverse_check(monsters)
-        draw_results(screen, monsters, results, succes_images, fail_images)
+        draw_results(screen, monsters, results, success_images, fail_images)
         # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
     
 InitGame()
