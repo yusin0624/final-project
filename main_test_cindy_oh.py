@@ -196,7 +196,7 @@ def update_and_draw_game(screen):
         transition_phase(cloud_speed, transition_img)
     else:
         current_monster = int(chapter / 2)
-        battle_phase(current_monster)S
+        battle_phase(current_monster)
 
     # 雲朵更新
     for cloud in clouds:
@@ -242,8 +242,6 @@ def update_and_draw_game(screen):
         is_in_game = 3
         #gameover()
     greeny.update_and_draw(screen)
-    hit_text = font.render(f"Hit Count: {greeny.attack_count}", True, (255, 0, 0))
-    screen.blit(hit_text, (30, 30))
      
 
 def transition_phase(cloud_speed, transition_img):
@@ -352,7 +350,7 @@ def input_player_name():
                     if len(name) < 20:  # 最多20個字
                         name += event.unicode  # 加入輸入的字元
 
-        # screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0))
         prompt = font_input.render("Enter your name:", True, (255, 255, 255))
         screen.blit(prompt, (200, 150))
 
