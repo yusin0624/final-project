@@ -7,12 +7,14 @@ import willlly
 import math
 import time
 from greeny_effect import GreenyEffect
+
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
     global start_time, end_time, find_willy, player_name
     global greeny
+    global success_images, fail_images
 
     # 初始化 Pygame
     pygame.init()
@@ -66,9 +68,35 @@ def InitGame():
         Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png", "assets/gameover_4.png"),
         Monster("Basketball Ace", 5000, 5000, 250, (WIDTH - 500, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png", "assets/gameover_5.png"),
         Monster("Banana Bomber", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png", "assets/gameover_6.png"),
-        Monster("Greenfin Warden", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png", "assets/gameover_7.png"),
+        Monster("Goblin", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png", "assets/gameover_7.png"),
         Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png", "assets/gameover_8.png"),
         Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
+    ]
+
+    success_images = [
+        None,
+        pygame.image.load("assets/monster1_success.png"),
+        pygame.image.load("assets/monster2_success.png"),
+        pygame.image.load("assets/monster3_success.png"),
+        pygame.image.load("assets/monster4_success.png"),
+        pygame.image.load("assets/monster5_success.png"),
+        pygame.image.load("assets/monster6_success.png"),
+        pygame.image.load("assets/monster7_success.png"),
+        pygame.image.load("assets/monster8_success.png"),
+        pygame.image.load("assets/monster9_success.png"),
+    ]
+
+    fail_images = [
+        None,
+        pygame.image.load("assets/monster1_fail.png"),
+        pygame.image.load("assets/monster2_fail.png"),
+        pygame.image.load("assets/monster3_fail.png"),
+        pygame.image.load("assets/monster4_fail.png"),
+        pygame.image.load("assets/monster5_fail.png"),
+        pygame.image.load("assets/monster6_fail.png"),
+        pygame.image.load("assets/monster7_fail.png"),
+        pygame.image.load("assets/monster8_fail.png"),
+        pygame.image.load("assets/monster9_fail.png"),
     ]
 
     attack_timer = 0
@@ -274,8 +302,32 @@ def victory():
     if keys[pygame.K_RETURN]:
         is_in_game = 4
 
-def traverse():  
-    pass
+def traverse_check(monsters):  
+    results = [0] * len(monsters)  # 預設都是0
+    # 跳過 monsters[0]
+    for i in range(1, len(monsters)):
+        if monsters[i].health <= 0:
+            results[i] = 1
+    return results
+
+def draw_results(screen, monsters, results, succes_images, fail_images):
+    for i in range(1, len(monsters)):
+        succes_images[i] = pygame.transform.scale(succes_images[i], (200, 200))
+        fail_images[i] = pygame.transform.scale(fail_images[i], (200, 200))
+
+    #可調位置（數值）
+    start_x = 50
+    start_y = 50
+    spacing = 220
+
+    for i in range(1, len(monsters)):
+        x = start_x + (i - 1) * spacing
+        if results[i] == 1:
+            screen.blit(succes_images[i], (x, start_y))
+        else:
+            screen.blit(fail_images[i], (x, start_y))
+            
+
 
 # 玩家輸入名稱
 def input_player_name():
@@ -374,7 +426,8 @@ def restart_detect():
         vic_img = pygame.image.load("assets/victory.png")
         vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
         screen.blit(vic_img, (0, 0))
-        traverse()
+        results = traverse_check(monsters)
+        draw_results(screen, monsters, results, success_images, fail_images)
         # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
     
 InitGame()
