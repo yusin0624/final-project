@@ -9,11 +9,12 @@ import time
 from greeny_effect import GreenyEffect
 
 def InitGame():
-    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, success_images, fail_images
+    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
     global start_time, end_time, find_willy, player_name
     global greeny
+    global success_images, fail_images
 
     # 初始化 Pygame
     pygame.init()
