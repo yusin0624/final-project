@@ -216,9 +216,11 @@ def update_and_draw_game(screen):
     screen.blit(player.img, (player.x, player.y + float_offset))
     draw_hp(player, screen, 275, 155, 20, -30, player.state)
     
-    hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
-    if hit:
+    prev_projectile_count = len(projectiles)
+    player.player_attack(projectiles, screen, monsters[current_monster], willy)
+    if len(projectiles) > prev_projectile_count:
         greeny.register_attack()
+
 
 
     # 怪物繪製
