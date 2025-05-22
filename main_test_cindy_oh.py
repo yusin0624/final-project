@@ -215,9 +215,11 @@ def update_and_draw_game(screen):
     screen.blit(player.img, (player.x, player.y + float_offset))
     draw_hp(player, screen, 275, 155, 20, -30, player.state)
     
-    hit = player.player_attack(projectiles, screen, monsters[current_monster], willy)
-    if hit:
+    prev_projectile_count = len(projectiles)
+    player.player_attack(projectiles, screen, monsters[current_monster], willy)
+    if len(projectiles) > prev_projectile_count:
         greeny.register_attack()
+
 
 
     # 怪物繪製
@@ -241,8 +243,6 @@ def update_and_draw_game(screen):
         is_in_game = 3
         #gameover()
     greeny.update_and_draw(screen)
-    hit_text = font.render(f"Hit Count: {greeny.attack_count}", True, (255, 0, 0))
-    screen.blit(hit_text, (30, 30))
      
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
@@ -292,13 +292,13 @@ def lose():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 4
+        is_in_game = 0
         
 def victory():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 4
+        is_in_game = 0
 
 def traverse_check(monsters):  
     results = [0] * len(monsters)  # 預設都是0
@@ -348,7 +348,7 @@ def input_player_name():
                     if len(name) < 20:  # 最多20個字
                         name += event.unicode  # 加入輸入的字元
 
-        # screen.fill((0, 0, 0))
+        screen.fill((0, 0, 0))
         prompt = font_input.render("Enter your name:", True, (255, 255, 255))
         screen.blit(prompt, (200, 150))
 
