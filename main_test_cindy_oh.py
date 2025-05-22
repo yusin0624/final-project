@@ -294,13 +294,13 @@ def lose():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 4
+        is_in_game = 0
         
 def victory():
     global is_in_game
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 4
+        is_in_game = 0
 
 def traverse_check(monsters):  
     results = [0] * len(monsters)  # 預設都是0
