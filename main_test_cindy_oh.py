@@ -46,7 +46,6 @@ def InitGame():
     #載入綠頭魚
     greeny = GreenyEffect("assets/greeny.png", WIDTH, HEIGHT)
 
-
     # 雲朵設定（隨機選圖）
     clouds = []
     for i in range(5):  # 五朵雲
@@ -245,7 +244,6 @@ def update_and_draw_game(screen):
     hit_text = font.render(f"Hit Count: {greeny.attack_count}", True, (255, 0, 0))
     screen.blit(hit_text, (30, 30))
      
-
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
     
@@ -325,9 +323,7 @@ def draw_results(screen, monsters, results, succes_images, fail_images):
         if results[i] == 1:
             screen.blit(succes_images[i], (x, start_y))
         else:
-            screen.blit(fail_images[i], (x, start_y))
-            
-
+            screen.blit(fail_images[i], (x, start_y))           
 
 # 玩家輸入名稱
 def input_player_name():
@@ -416,8 +412,7 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
         screen.blit(time_text, (800, y))  
 
     pygame.display.flip()
-    
-    
+       
 def restart_detect():
     if keys[pygame.K_RETURN]:
         #gameover()
@@ -430,8 +425,8 @@ def restart_detect():
         draw_results(screen, monsters, results, success_images, fail_images)
         # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
     
-InitGame()
 
+InitGame()
 
 # 遊戲主迴圈
 while running:
@@ -449,19 +444,22 @@ while running:
         start_time = time.time()
         if keys[pygame.K_RETURN]:
             is_in_game = 1
-        
-    if is_in_game == 1:
-       
+    
+    #game    
+    elif is_in_game == 1:
         update_and_draw_game(screen)
     
+    #victory or lose
     elif is_in_game == 2:
         show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name)
         lose()
     
+    #ranking
     elif is_in_game == 3:
         # show_leaderboard(moon_warriors_score, start_time, end_time)
         victory()
-        
+    
+    #collection    
     elif is_in_game == 4:
         # show_leaderboard(moon_warriors_score, start_time, end_time)
         restart_detect()
