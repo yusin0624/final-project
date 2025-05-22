@@ -168,7 +168,7 @@ def update_and_draw_game(screen):
         transition_phase(cloud_speed, transition_img)
     else:
         current_monster = int(chapter / 2)
-        battle_phase(current_monster)
+        battle_phase(current_monster)S
 
     # 雲朵更新
     for cloud in clouds:
