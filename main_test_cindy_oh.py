@@ -7,6 +7,7 @@ import willlly
 import math
 import time
 from greeny_effect import GreenyEffect
+import json
 
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT
@@ -365,13 +366,19 @@ def input_player_name():
     return name if name else "Player"
 
 # 成績資料
+def save_scoreboard(scoreboard, filename="score.json"):
+    with open(filename, "w") as f:
+        json.dump(scoreboard, f)
+
+def load_scoreboard(filename="score.json"):
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []  # 如果檔案不存在就回傳空列表
+    
 moon_warriors_score = []
-moon_warriors_score = [
-    {"name": "Joy", "score": 1243, "time": 95},
-    {"name": "Zoe", "score": 39500, "time": 398},
-    {"name": "Cindy", "score": 29870, "time": 266},
-    {"name": "Wendy", "score": 16340, "time": 120},
-]
+moon_warriors_score = load_scoreboard()
 
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
@@ -386,6 +393,8 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
 
     # 排序
     moon_warriors_score.sort(key=lambda x: (-x["score"], x["time"]))
+
+    save_scoreboard(moon_warriors_score)
 
     # 沒找到威力，排名下降一位
     if find_willy != 1:
