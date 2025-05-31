@@ -7,6 +7,7 @@ import willlly
 import math
 import time
 from greeny_effect import GreenyEffect
+import json
 
 #初始化、載入圖片
 def InitGame():
@@ -376,6 +377,60 @@ def draw_results(screen, monsters, results, succes_images, fail_images):
         else:
             screen.blit(fail_images[i], (x, start_y))           
 
+# 玩家輸入名稱
+def input_player_name():
+    name = ""
+    active = True
+    input_rect = pygame.Rect(200, 200, 400, 50)
+    color_active = pygame.Color('lightskyblue3')
+    font_input = pygame.font.Font(None, 48)
+
+    while active:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    active = False  # 輸入完成
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]  # 刪除最後一個字
+                else:
+                    if len(name) < 20:  # 最多20個字
+                        name += event.unicode  # 加入輸入的字元
+
+        screen.fill((0, 0, 0))
+        prompt = font_input.render("Enter your name:", True, (255, 255, 255))
+        screen.blit(prompt, (200, 150))
+
+        txt_surface = font_input.render(name, True, (255, 255, 255))
+        width = max(400, txt_surface.get_width() + 10)
+        input_rect.w = width
+        pygame.draw.rect(screen, color_active, input_rect, 2)
+        screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
+
+        pygame.display.flip()
+        pygame.time.delay(30)
+
+    pygame.time.delay(10)
+    return name if name else "Player"
+
+# 成績資料
+def save_scoreboard(scoreboard, filename="score.json"):
+    with open(filename, "w") as f:
+        json.dump(scoreboard, f)
+
+def load_scoreboard(filename="score.json"):
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []  # 如果檔案不存在就回傳空列表
+    
+moon_warriors_score = []
+moon_warriors_score = load_scoreboard()
+
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
     # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
@@ -389,6 +444,8 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
 
     # 排序
     moon_warriors_score.sort(key=lambda x: (-x["score"], x["time"]))
+
+    save_scoreboard(moon_warriors_score)
 
     # 沒找到威力，排名下降一位
     if find_willy != 1:
