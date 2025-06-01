@@ -65,6 +65,7 @@ def InitGame():
         Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
     ]
 
+    #怪獸徽章（成功跟失敗的）
     success_images = [
         None,
         pygame.image.load("assets/monster1_success.png"),
@@ -352,6 +353,7 @@ def victory():
     if keys[pygame.K_RETURN]:
         is_in_game = 0
 
+#確認打敗哪些怪獸，打敗1，沒打敗0
 def traverse_check(monsters):  
     results = [0] * len(monsters)  # 預設都是0
     # 跳過 monsters[0]
@@ -360,6 +362,7 @@ def traverse_check(monsters):
             results[i] = 1
     return results
 
+#根據traverse_check的結果印出相對應的怪獸徽章
 def draw_results(screen, monsters, results, succes_images, fail_images):
     for i in range(1, len(monsters)):
         succes_images[i] = pygame.transform.scale(succes_images[i], (200, 200))
