@@ -11,7 +11,8 @@ import json
 
 #初始化、載入圖片
 def InitGame():
-    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, start_page, player_name, greeny, success_images, fail_images, moon_warriors_score
+    global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, start_page
+    global vic_img, greeny, success_images, fail_images, moon_warriors_score, leaderboard_img
     
     # 初始化 Pygame
     pygame.init()
@@ -30,6 +31,8 @@ def InitGame():
     bg_img = pygame.image.load("assets/background.jpeg")
     bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
     start_page = pygame.image.load("assets/start.png")
+    vic_img = pygame.image.load("assets/victory.png")
+    leaderboard_img = pygame.image.load("assets/leaderboard.png")
 
     # 載入雲朵圖片（兩種）
     cloud_images = [
@@ -103,55 +106,39 @@ def InitGame():
 
 #操作教學、輸入名字
 def StartPage():
-    global player_name
-    screen.blit(start_page, (0, 0))
-    # 玩家輸入名稱
-    player_name = input_player_name()
-    
-# 玩家輸入名稱
-def input_player_name():
-    name = ""
-    active = True
-    input_rect = pygame.Rect(200, 200, 400, 50)
+    global name, is_in_game
+    input_rect = pygame.Rect(50, 300, 400, 50)
     color_active = pygame.Color('lightskyblue3')
-    font_input = pygame.font.Font(None, 48)
 
-    while active:
+    while is_in_game == 0:
+        screen.blit(start_page, (0, 0))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                sys.exit()
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    active = False  # 輸入完成
+                    is_in_game = 1  # 名字輸入完畢，進入遊戲
                 elif event.key == pygame.K_BACKSPACE:
-                    name = name[:-1]  # 刪除最後一個字
-                else:
-                    if len(name) < 20:  # 最多20個字
-                        name += event.unicode  # 加入輸入的字元
+                    name = name[:-1]
+                elif len(name) < 20 and event.unicode.isprintable():
+                    name += event.unicode
 
-        screen.fill((0, 0, 0))
-        prompt = font_input.render("Enter your name:", True, (255, 255, 255))
-        screen.blit(prompt, (200, 150))
-
-        txt_surface = font_input.render(name, True, (255, 255, 255))
-        width = max(400, txt_surface.get_width() + 10)
-        input_rect.w = width
+        # 畫輸入框和文字
+        txt_surface = font.render(name, True, (255, 255, 255))
         pygame.draw.rect(screen, color_active, input_rect, 2)
         screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
 
         pygame.display.flip()
         pygame.time.delay(30)
-
-    pygame.time.delay(10)
-    return name if name else "Player"
     
 #重置數據  
 def ResetGame():
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
-    global start_time, end_time, find_willy
+    global start_time, end_time, find_willy, name, ending
 
     attack_timer = 0
     transition_timer = 0
@@ -165,10 +152,12 @@ def ResetGame():
     willy = 0
     is_in_game = 0
     find_willy = 0
+    name = "Sailor Moon"
+    ending = 0
 
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
-    global start_time, end_time, find_willy
+    global start_time, end_time, find_willy, ending
     cloud_speed = 10
 
     screen.blit(bg_img, (0, 0))
@@ -282,17 +271,17 @@ def update_and_draw_game(screen):
             monsters[current_monster].draw(screen)
             draw_hp(monsters[current_monster], screen, 950, 150, 825, -30, monsters[current_monster].state_img)
             
-    #遊戲結束畫面
+    #遊戲結束
     if player.health <= 0:
-        
         end_time = time.time()
         is_in_game = 2
-        #gameover()
+        ending = 0      #lose
 
     if monsters[9].health <= 0:
         end_time = time.time()
-        is_in_game = 3
-        #gameover()
+        is_in_game = 2
+        ending = 1      #victory
+        
     greeny.update_and_draw(screen)
      
 def transition_phase(cloud_speed, transition_img):
@@ -341,15 +330,17 @@ def battle_phase(monster):
 
 def lose():
     global is_in_game
+    screen.blit(monsters[current_monster].gameover, (0, 0))
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 0
+        is_in_game = 3
         
 def victory():
     global is_in_game
+    screen.blit(vic_img, (0, 0))
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RETURN]:
-        is_in_game = 0
+        is_in_game = 3
 
 #確認打敗哪些怪獸，打敗1，沒打敗0
 def traverse_check(monsters):  
@@ -434,9 +425,7 @@ moon_warriors_score = load_scoreboard()
 
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
-    # screen.fill((0, 0, 0)) # 轉換頁面 #黑色
-    title = font.render("RANKING", True, (225, 225, 0)) # 黃色
-    screen.blit(title, (450, 20))
+    screen.blit(leaderboard_img, (0, 0))
 
     # 新增玩家成績
     if not any(score["name"] == player_name for score in moon_warriors_score):
@@ -479,15 +468,12 @@ def restart_detect():
         #gameover()
         InitGame()
     else:
-        vic_img = pygame.image.load("assets/victory.png")
-        vic_img = pygame.transform.scale(vic_img, (WIDTH, HEIGHT))
-        screen.blit(vic_img, (0, 0))
+        
         results = traverse_check(monsters)
         draw_results(screen, monsters, results, success_images, fail_images)
         # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
 
 InitGame()
-StartPage()
 ResetGame()
 
 # 遊戲主迴圈
@@ -504,10 +490,8 @@ while running:
 
     #start page, input player name
     if is_in_game == 0:
-        start_time = time.time()
         StartPage()
-        if keys[pygame.K_RETURN]:
-            is_in_game = 1
+        start_time = time.time()
     
     #game    
     elif is_in_game == 1:
@@ -515,20 +499,21 @@ while running:
     
     #victory or lose
     elif is_in_game == 2:
-        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name)
-        lose()
-    
+        if ending == 0:
+            lose()
+        elif ending == 1:
+            victory()
+                
     #ranking
     elif is_in_game == 3:
-        # show_leaderboard(moon_warriors_score, start_time, end_time)
-        victory()
+        show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, name)
     
     #collection    
     elif is_in_game == 4:
         # show_leaderboard(moon_warriors_score, start_time, end_time)
         restart_detect()
 
-    # draw_grid(screen, WIDTH, HEIGHT)
+    #draw_grid(screen, WIDTH, HEIGHT)
 
     pygame.display.update()
     pygame.time.delay(30)
