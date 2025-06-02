@@ -1,63 +1,93 @@
 # final-project
 
-[很厲害的google doc](https://docs.google.com/document/d/1KWhExE8u1lSftSq_JfSb_DvZU3WkM36czSTOOgYftfw/edit?usp=sharing)
+# =========================
+#     GAME INTRODUCTION
+# =========================
 
-main_test.py是我怕直接改在main.py會炸掉，不知道怎麼改回去，你們也可以用test試ㄏㄏ
+# Game Overview
+1. Title: Moon Warriors
+2. Genre: Side-scrolling action shooter + mini-game
+3. Tools Used: Python with Pygame
+4. Battle Mechanics:  Player can attack enemies and dodge
 
-0420
-現在最厲害的版本是main_test_wow，但他自己跑一跑會報錯關掉
-main_test_cindy沒有狀態列，但player跟monster都會乖乖射子彈了
-血條顯示我都寫好了，自己複製去各自的檔案，我有分玩家、魔王、小兵的，差在y的值
+# Game Flow
+1. Menu: Show introductions and for players to enter their name.
+2. Gameplay phase: Consist of battle phase and transition phase. The player need to beat every monster met on the way.
+3. Ending: If the player defeats the ninth monster, they win the game. Otherwise, the game ends in failure.
+4. Leaderboard: Rank players' score and used time.
+5. Collection: Defeaing a monster can collect a correspond badge.
 
-0426
-在寫transition，沒transition的話可以正常對打、顯示血量、換下一關
-todo: 找好全部的monster圖片
-      transition寫好
+# Characters
+1. Player
+2. Monsters(1~9)
+3. Willy in hidden Mini-game
+4. Green Fish of hidden side effect
 
-0427
-要加上進度條，在transition呼叫時順便顯示進度條的變化
-我想要試試看可不可以把攻擊招式增加，會再開一個新檔案試寫
-我寫了角色hp ＝ 0 會退出遊戲
+# Nothing can go wrong!
+1. Discover and finish the secret task hidden within the game.
+2. Eliminate monster in the every stage.
+3. Survive without recovering any HP.
 
-0430
-1. willy  bullet寫好了
-2. 測試，排列組合一下每個功能都要試到
-   - 被monster1～9打到（傷害數字） 
-   - 打到monster1～9（傷害數字、聲音）
-   - 死在monster1～9（gameover畫面、enter回start page） o
-   - victory（同上）
-   - 重開之後音樂 
-   - battle/transition階段，從willy回來 
-   
-   試完V
-     monster  | hit player | being attack | gameover |
-   - monster1 |      V     |      V       |     V    |
-   - monster2 |      V     |      V       |     V    |
-   - monster3 |      V     |      V       |     V    |
-   - monster4 |      V     |      V       |     V    |
-   - monster5 |      V     |      V       |     V    |
-   - monster6 |      V     |      V       |     V    |
-   - monster7 |      V     |      V       |     V    |
-   - monster8 |      V     |      V       |     V    |
-   - monster9 |      V     |      V       |     V    |
+# Innovative Features
+1. Mini-Game: Find Willy
+      - Objective: Find Willy 15 times within 60 seconds
+      - Distraction: Fake Willy (deducts score if touched)
+      - Includes sound effects, voice lines, and background music
+      - Only returns to main game upon success.
+      - Once the game is passed, player gain a new Willy Bullets, which is bigger than the original ones.
+      - If the player didn't find Willy, the rank drops by 1.
+2. Hidden Effect: Green Fish
+      - Triggered by pressing space 10 times within 5 seconds
+      - Visual: A green fish grows and blocks your vision and disappear after 10 seconds automatically
+3. Earn a badge for each boss you defeat.
 
-   victory | V | 好了
+# Controls
+| Key         | Action                        |
+|-------------|-------------------------------|
+| W / S key   | Character movement            |
+| A / D key   | Speed control                 |
+| Space       | Player Attack                 |
+| Q / E key   | Enter mini-game               |
+| Mouse click | Shirnk Player                 |
 
-   bgm
-   | in game | back from willy | gameover restart | victory restart |
-   |    V    |        V        |         V        |        X        |
 
-   從willy回來
-   battle     | V |
-   transition | V |
+# =========================
+#     PROJECT STRUCTURE
+# =========================
 
-3. bug
-      - transition雲會在state上面  
+final_project/
+├── assets/              # Game assets (images, etc.)
+│ └── player.png
+│ └── etc
+├── main.py              # Main game loop
+├── character_oh.py      # Projectile logic
+├── willy.py             # Mini-game
+├── score.JSON           # File I/O and saving scores
+├── renew_state_display  # Display HP bar
+└── greeny_effect.py     # Green Fish Effect
 
-4. todo
-   - check老師的google doc (basic/advanced part)，可能現在做不完錄完影片做
-   - willy只能玩一次？多玩幾次機率up？
-   - player rect改成圓形
-   - sort：打怪獸用的時間or打怪獸用的子彈or總通關時間
-   - monster從後面跑出來，不要突然閃現
-   - 進度條
+# ==============================
+#     TECHNICAL REQUIREMENTS
+# ==============================
+
+# Basic Part
+| Requirement        | Our Implementation                                                             |
+|--------------------|--------------------------------------------------------------------------------|
+| Basic Data Types   | Use `int`, `float`, `bool` and `none`                                          |
+| String Data        | Use `strings` for player's name, monsters' name and dialog                     |
+| Custom Structure   | Use `class` for player, monsters, projectiles, Willy, and Green Fish           |
+| Traverse           | Track defeated monsters                                                        |
+| Sort               | Levels difficulty and leaderboard                                              |
+| Random             | Player's bullet, Willy's position, Cloud images selection, Monsters' movement  |
+| File I/O           | Reading Image and Audio Files, Read scores from score.json                     |
+
+# ================
+#     TEAMWORK
+# ================
+
+| Member                 | Responsibility                         |
+|------------------------|----------------------------------------|
+| 413410007 張家馨 Joy    | Midterm Presentation, Final Presentation, Leaderboard, Image Sourcing, Player name             |
+| 413410033 黃方柔 Zoe    | Midterm Presentation, Final Presentation, Find Willy, Green Fish Effect, Background music      |
+| 413410057 林俞馨 Cindy  | Midterm Presentation, README, System coordination, Game loop, Character behavior, Art Design   |
+| 413410069 呂慈玟 Wendy  | Midterm Presentation, Final Presentation, Trailer Video, HP bar, Collection                    |

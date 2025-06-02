@@ -10,7 +10,10 @@ from greeny_effect import GreenyEffect
 import json
 import sys
 
-##### 初始化、載入圖片 ##### done
+# =================
+#    Initialize
+# =================
+
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, start_page
     global vic_img, greeny, success_images, fail_images, moon_warriors_score, leaderboard_img, collection_img
@@ -88,7 +91,11 @@ def InitGame():
     moon_warriors_score = []
     moon_warriors_score = load_scoreboard()
 
-##### 重置數據 ##### done
+# =====================
+#    Pre-Game Setup    is_in_game == 0
+# =====================
+
+# 每次遊戲重置數據
 def ResetGame():
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
@@ -125,7 +132,7 @@ def ResetGame():
     name = "Sailor Moon"
     ending = 0
 
-##### 操作教學、輸入名字 ##### done
+# 操作教學、輸入名字
 def StartPage():
     global name, is_in_game
     input_rect = pygame.Rect(50, 300, 400, 50)
@@ -157,8 +164,13 @@ def StartPage():
 
         pygame.display.flip()
         pygame.time.delay(30)
+
     
-##### in game ##### done
+# =====================
+#    Gameplay phase    is_in_game == 1
+# =====================
+
+# Main Game Loop
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
     global start_time, end_time, find_willy, ending
@@ -335,7 +347,10 @@ def battle_phase(monster):
         phase = "transition"
         chapter += 1
 
-##### ending ##### done
+
+# =============
+#    Ending    is_in_game == 2
+# =============
 def lose():
     global is_in_game
     screen.blit(monsters[current_monster].gameover, (0, 0))
@@ -350,7 +365,11 @@ def victory():
     if keys[pygame.K_RETURN]:
         is_in_game = 3
 
-##### 排行榜 ##### (done)
+
+# ==================
+#    Leaderboard    is_in_game == 3
+# ==================
+
 #display
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
@@ -419,13 +438,16 @@ def load_scoreboard(filename="score.json"):
     except FileNotFoundError:
         return []  # 如果檔案不存在就回傳空列表
     
-##### 怪獸徽章 #####
+    
+# =================
+#    Collection    is_in_game == 3
+# =================
+
 #根據traverse_check的結果印出相對應的怪獸徽章
 def show_collection(screen, monsters, results, success_images, fail_images):
     global is_in_game
-
     screen.blit(collection_img, (0, 0))  # 背景圖
-
+    
     # 可調整的排版參數
     spacing_x = 220      # 圖片間的水平距離
     spacing_y = 200      # 圖片間的垂直距離（行與行之間）
@@ -453,10 +475,13 @@ def traverse_check(monsters):
             results[i] = 1
     return results
 
+
 InitGame()
 ResetGame()
 
-# 遊戲主迴圈
+# =====================
+#    MAIN GAME LOOP    
+# =====================
 while running:
         
     for event in pygame.event.get():
@@ -479,7 +504,6 @@ while running:
     else:
         enter_released = True  # 放開後可以再觸發
 
-
     #start page, input player name
     if is_in_game == 0:
         StartPage()
@@ -489,14 +513,14 @@ while running:
     elif is_in_game == 1:
         update_and_draw_game(screen)
     
-    #victory or lose
+    #ending
     elif is_in_game == 2:
         if ending == 0:
             lose()
         elif ending == 1:
             victory()
                 
-    #ranking
+    #leaderboard
     elif is_in_game == 3:
         show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, name)
     
