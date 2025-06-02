@@ -8,11 +8,12 @@ import math
 import time
 from greeny_effect import GreenyEffect
 import json
+import sys
 
-#初始化、載入圖片
+##### 初始化、載入圖片 ##### done
 def InitGame():
     global font, screen, bg_img, cloud_images, clouds, projectiles, player, monsters, WIDTH, HEIGHT, start_page
-    global vic_img, greeny, success_images, fail_images, moon_warriors_score, leaderboard_img
+    global vic_img, greeny, success_images, fail_images, moon_warriors_score, leaderboard_img, collection_img
     
     # 初始化 Pygame
     pygame.init()
@@ -33,6 +34,7 @@ def InitGame():
     start_page = pygame.image.load("assets/start.png")
     vic_img = pygame.image.load("assets/victory.png")
     leaderboard_img = pygame.image.load("assets/leaderboard.png")
+    collection_img = pygame.image.load("assets/collection.png")
 
     # 載入雲朵圖片（兩種）
     cloud_images = [
@@ -51,22 +53,6 @@ def InitGame():
             "y": random.randint(30, 150),
             "img": random.choice(cloud_images)
         })
-
-    # 物件列表
-    projectiles = []
-    player = Player(100, -250)
-    monsters = [
-        Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
-        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH + 150, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
-        Monster("Void Spitter", 2000, 2000, 150, (WIDTH - 500, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png", "assets/gameover_2.png"),
-        Monster("Volley Empress", 3000, 3000, 175, (WIDTH - 500, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png", "assets/gameover_3.png"),
-        Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png", "assets/gameover_4.png"),
-        Monster("Basketball Ace", 5000, 5000, 250, (WIDTH - 500, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png", "assets/gameover_5.png"),
-        Monster("Banana Bomber", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png", "assets/gameover_6.png"),
-        Monster("Goblin", 4000, 4000, 200, (WIDTH - 500, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png", "assets/gameover_7.png"),
-        Monster("Blood Drainer", 7000, 7000, 300, (WIDTH - 500, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png", "assets/gameover_8.png"),
-        Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH - 500, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
-    ]
 
     #怪獸徽章（成功跟失敗的）
     success_images = [
@@ -95,51 +81,35 @@ def InitGame():
         pygame.image.load("assets/monster9_fail.png"),
     ]
     
-    # 成績資料
+    for i in range(1, len(success_images)):
+        success_images[i] = pygame.transform.scale(success_images[i], (200, 200))
+        fail_images[i] = pygame.transform.scale(fail_images[i], (200, 200))
+
     moon_warriors_score = []
-    moon_warriors_score = [
-        {"name": "Joy", "score": 1243, "time": 95},
-        {"name": "Zoe", "score": 39500, "time": 398},
-        {"name": "Cindy", "score": 29870, "time": 266},
-        {"name": "Wendy", "score": 16340, "time": 120},
-    ]
+    moon_warriors_score = load_scoreboard()
 
-#操作教學、輸入名字
-def StartPage():
-    global name, is_in_game
-    input_rect = pygame.Rect(50, 300, 400, 50)
-    color_active = pygame.Color('lightskyblue3')
-
-    while is_in_game == 0:
-        screen.blit(start_page, (0, 0))
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    is_in_game = 1  # 名字輸入完畢，進入遊戲
-                elif event.key == pygame.K_BACKSPACE:
-                    name = name[:-1]
-                elif len(name) < 20 and event.unicode.isprintable():
-                    name += event.unicode
-
-        # 畫輸入框和文字
-        txt_surface = font.render(name, True, (255, 255, 255))
-        pygame.draw.rect(screen, color_active, input_rect, 2)
-        screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
-
-        pygame.display.flip()
-        pygame.time.delay(30)
-    
-#重置數據  
+##### 重置數據 ##### done
 def ResetGame():
     global attack_timer, transition_timer, flickering_timer, mouse_timer
     global chapter, current_monster, phase, start_page, running, float_timer, willy, is_in_game
     global start_time, end_time, find_willy, name, ending
+    global projectiles, player, monsters
 
+    # 物件列表
+    projectiles = []
+    player = Player(100, -250)
+    monsters = [
+        Monster("Transition", 100000, 100000, 0, (-100, -100), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        Monster("Flame Tyrant", 1500, 1500, 100, (WIDTH + 150, HEIGHT - 400), "assets/monster1.png", "assets/fireball.png", "assets/monster1_state.png", "assets/transition_1.png", "assets/monster1_damage.png", "assets/gameover_1.png"),
+        Monster("Void Spitter", 2000, 2000, 150, (WIDTH + 150, HEIGHT - 400), "assets/monster2.png", "assets/fireball2.png", "assets/monster2_state.png", "assets/transition_2.png", "assets/monster2_damage.png", "assets/gameover_2.png"),
+        Monster("Volley Empress", 3000, 3000, 175, (WIDTH + 150, HEIGHT - 400), "assets/monster3.png", "assets/fireball3.png", "assets/monster3_state.png", "assets/transition_3.png", "assets/monster3_damage.png", "assets/gameover_3.png"),
+        Monster("Tennis Phantom", 3000, 3000, 200, (WIDTH + 150, HEIGHT - 400), "assets/monster4.png", "assets/fireball4.png", "assets/monster4_state.png", "assets/transition_4.png", "assets/monster4_damage.png", "assets/gameover_4.png"),
+        Monster("Basketball Ace", 5000, 5000, 250, (WIDTH + 150, HEIGHT - 400), "assets/monster5.png", "assets/fireball5.png", "assets/monster5_state.png", "assets/transition_5.png", "assets/monster5_damage.png", "assets/gameover_5.png"),
+        Monster("Banana Bomber", 4000, 4000, 200, (WIDTH + 150, HEIGHT - 400), "assets/monster6.png", "assets/fireball6.png", "assets/monster6_state.png", "assets/transition_6.png", "assets/monster6_damage.png", "assets/gameover_6.png"),
+        Monster("Goblin", 4000, 4000, 200, (WIDTH + 150, HEIGHT - 400), "assets/monster7.png", "assets/fireball7.png", "assets/monster7_state.png", "assets/transition_7.png", "assets/monster7_damage.png", "assets/gameover_7.png"),
+        Monster("Blood Drainer", 7000, 7000, 300, (WIDTH + 150, HEIGHT - 400), "assets/monster8.png", "assets/fireball8.png", "assets/monster8_state.png", "assets/transition_8.png", "assets/monster8_damage.png", "assets/gameover_8.png"),
+        Monster("Storm Sovereign", 10000, 10000, 400, (WIDTH + 150, HEIGHT - 400), "assets/monster9.png", "assets/fireball9.png", "assets/monster9_state.png", "assets/transition_9.png", "assets/monster9_damage.png", "assets/gameover_9.png"),
+    ]
     attack_timer = 0
     transition_timer = 0
     flickering_timer = 0
@@ -155,19 +125,53 @@ def ResetGame():
     name = "Sailor Moon"
     ending = 0
 
+##### 操作教學、輸入名字 ##### done
+def StartPage():
+    global name, is_in_game
+    input_rect = pygame.Rect(50, 300, 400, 50)
+    color_active = pygame.Color('lightskyblue3')
+
+    while is_in_game == 0:
+        screen.blit(start_page, (0, 0))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.KEYDOWN:   
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_RETURN:
+                    is_in_game = 1  # 名字輸入完畢，進入遊戲
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                elif len(name) < 20 and event.unicode.isprintable():
+                    name += event.unicode
+
+        # 畫輸入框和文字
+        txt_surface = font.render(name, True, (255, 255, 255))
+        pygame.draw.rect(screen, color_active, input_rect, 2)
+        screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
+
+        pygame.display.flip()
+        pygame.time.delay(30)
+    
+##### in game ##### done
 def update_and_draw_game(screen):
     global chapter, float_timer, HEIGHT, WIDTH, cloud_speed, current_monster, is_in_game, willy, player
     global start_time, end_time, find_willy, ending
-    cloud_speed = 10
+    cloud_speed = 15
 
     screen.blit(bg_img, (0, 0))
     
     # 鍵盤輸入
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
-        cloud_speed = 20
+        cloud_speed = 35
     elif keys[pygame.K_a]:
-        cloud_speed = 2
+        cloud_speed = 7
     if keys[pygame.K_w]:
         player.y -= cloud_speed
         #player.rect.topleft = (player.x, player.y)  # 更新 player_rect 的位置
@@ -265,7 +269,8 @@ def update_and_draw_game(screen):
     # 怪物繪製
     if phase == "battle":
         if current_monster:
-            monsters[current_monster].attack()
+            if monsters[current_monster].rect.x <= (WIDTH - 500):
+                monsters[current_monster].attack()
             monsters[current_monster].update_movement(HEIGHT)
             monsters[current_monster].update_bullets(player, screen)
             monsters[current_monster].draw(screen)
@@ -283,7 +288,8 @@ def update_and_draw_game(screen):
         ending = 1      #victory
         
     greeny.update_and_draw(screen)
-     
+
+# 關卡間過場     
 def transition_phase(cloud_speed, transition_img):
     global phase, transition_timer, chapter, transition_y, transition_direction
     
@@ -318,7 +324,8 @@ def transition_phase(cloud_speed, transition_img):
         transition_timer = 0
         chapter += 1
         phase = "battle"
-    
+
+# 在打怪獸
 def battle_phase(monster):
     global phase, chapter, current_monster
 
@@ -328,6 +335,7 @@ def battle_phase(monster):
         phase = "transition"
         chapter += 1
 
+##### ending ##### done
 def lose():
     global is_in_game
     screen.blit(monsters[current_monster].gameover, (0, 0))
@@ -342,95 +350,29 @@ def victory():
     if keys[pygame.K_RETURN]:
         is_in_game = 3
 
-#確認打敗哪些怪獸，打敗1，沒打敗0
-def traverse_check(monsters):  
-    results = [0] * len(monsters)  # 預設都是0
-    # 跳過 monsters[0]
-    for i in range(1, len(monsters)):
-        if monsters[i].health <= 0:
-            results[i] = 1
-    return results
-
-#根據traverse_check的結果印出相對應的怪獸徽章
-def draw_results(screen, monsters, results, succes_images, fail_images):
-    for i in range(1, len(monsters)):
-        succes_images[i] = pygame.transform.scale(succes_images[i], (200, 200))
-        fail_images[i] = pygame.transform.scale(fail_images[i], (200, 200))
-
-    #可調位置（數值）
-    start_x = 50
-    start_y = 50
-    spacing = 220
-
-    for i in range(1, len(monsters)):
-        x = start_x + (i - 1) * spacing
-        if results[i] == 1:
-            screen.blit(succes_images[i], (x, start_y))
-        else:
-            screen.blit(fail_images[i], (x, start_y))           
-
-# 玩家輸入名稱
-def input_player_name():
-    name = ""
-    active = True
-    input_rect = pygame.Rect(200, 200, 400, 50)
-    color_active = pygame.Color('lightskyblue3')
-    font_input = pygame.font.Font(None, 48)
-
-    while active:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    active = False  # 輸入完成
-                elif event.key == pygame.K_BACKSPACE:
-                    name = name[:-1]  # 刪除最後一個字
-                else:
-                    if len(name) < 20:  # 最多20個字
-                        name += event.unicode  # 加入輸入的字元
-
-        screen.fill((0, 0, 0))
-        prompt = font_input.render("Enter your name:", True, (255, 255, 255))
-        screen.blit(prompt, (200, 150))
-
-        txt_surface = font_input.render(name, True, (255, 255, 255))
-        width = max(400, txt_surface.get_width() + 10)
-        input_rect.w = width
-        pygame.draw.rect(screen, color_active, input_rect, 2)
-        screen.blit(txt_surface, (input_rect.x + 5, input_rect.y + 5))
-
-        pygame.display.flip()
-        pygame.time.delay(30)
-
-    pygame.time.delay(10)
-    return name if name else "Player"
-
-# 成績資料
-def save_scoreboard(scoreboard, filename="score.json"):
-    with open(filename, "w") as f:
-        json.dump(scoreboard, f)
-
-def load_scoreboard(filename="score.json"):
-    try:
-        with open(filename, "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []  # 如果檔案不存在就回傳空列表
-    
-moon_warriors_score = []
-moon_warriors_score = load_scoreboard()
-
+##### 排行榜 ##### (done)
+#display
 def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, player_name):
     global player
+    
     screen.blit(leaderboard_img, (0, 0))
 
     # 新增玩家成績
     if not any(score["name"] == player_name for score in moon_warriors_score):
         player_score_time = end_time - start_time
         moon_warriors_score.append({"name": player_name, "score": player.score, "time": player_score_time})
+    
+    # 本次成績
+    player_score_time = end_time - start_time
+    tip_text = font.render("Your Score:", True, (255, 255, 255))
+    name_text = font.render(player_name, True, (255, 255, 255))
+    score_text = font.render(str(player.score), True, (255, 255, 255))
+    time_text = font.render(f"{player_score_time:.2f}s", True, (255, 255, 255))
+
+    screen.blit(tip_text, (200, 180))   
+    screen.blit(name_text, (435, 180))   
+    screen.blit(score_text, (835, 180))   
+    screen.blit(time_text, (1025, 180))
 
     # 排序
     moon_warriors_score.sort(key=lambda x: (-x["score"], x["time"]))
@@ -439,7 +381,6 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
 
     # 沒找到威力，排名下降一位
     if find_willy != 1:
-        
         for j, playerrr in enumerate(moon_warriors_score[:5]):
             if playerrr["name"] == player_name and j < 4:
                 moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
@@ -453,32 +394,71 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
         rank_text = font.render(f"{i+1}.", True, (255, 255, 255))   
         name_text = font.render(playerrr["name"], True, (255, 255, 255))    
         score_text = font.render(score_str, True, (255, 255, 255))    
-        time_text = font.render(time_str + "s", True, (255, 255, 255))  
+        time_text = font.render(time_str + "s", True, (255, 255, 255))
+        tip_text = font.render("Watch out! You didn't FIND WILLY and fall one rank!", True, (255, 255, 255))
+  
 
-        y = 70 + i * 70   # 每一行的 y 座標：每行往下 70px
-        screen.blit(rank_text, (450, y))   
-        screen.blit(name_text, (510, y))   
-        screen.blit(score_text, (650, y))   
-        screen.blit(time_text, (800, y))  
-
-    pygame.display.flip()
-       
-def restart_detect():
-    if keys[pygame.K_RETURN]:
-        #gameover()
-        InitGame()
-    else:
+        y = 285 + i * 70   # 每一行的 y 座標：每行往下 70px
+        screen.blit(rank_text, (200, y))   
+        screen.blit(name_text, (260, y))   
+        screen.blit(score_text, (660, y))   
+        screen.blit(time_text, (850, y))  
         
-        results = traverse_check(monsters)
-        draw_results(screen, monsters, results, success_images, fail_images)
-        # show_leaderboard(moon_warriors_score, start_time, end_time, find_willy)
+    if find_willy != 1:
+        screen.blit(tip_text, (250,630))   
+        
+# 成績資料
+def save_scoreboard(scoreboard, filename="score.json"):
+    with open(filename, "w") as f:
+        json.dump(scoreboard, f)
+
+def load_scoreboard(filename="score.json"):
+    try:
+        with open(filename, "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []  # 如果檔案不存在就回傳空列表
+    
+##### 怪獸徽章 #####
+#根據traverse_check的結果印出相對應的怪獸徽章
+def show_collection(screen, monsters, results, success_images, fail_images):
+    global is_in_game
+
+    screen.blit(collection_img, (0, 0))  # 背景圖
+
+    # 可調整的排版參數
+    spacing_x = 220      # 圖片間的水平距離
+    spacing_y = 200      # 圖片間的垂直距離（行與行之間）
+    start_x = 150         # 第一列圖的起始 x 座標
+    start_y = 200        # 第一列圖的起始 y 座標
+    max_per_row = 5      # 每列最多幾個
+
+    for i in range(1, len(monsters)):
+        row = 0 if i <= 5 else 1                     # 前5隻在第0列，其餘在第1列
+        col = (i - 1) % max_per_row                  # 第幾欄（0-4）
+        x = start_x + col * spacing_x
+        y = start_y + row * spacing_y
+
+        if results[i] == 1:
+            screen.blit(success_images[i], (x, y))
+        else:
+            screen.blit(fail_images[i], (x, y))
+        
+#確認打敗哪些怪獸，打敗1，沒打敗0
+def traverse_check(monsters):  
+    results = [0] * len(monsters)  # 預設都是0
+    # 跳過 monsters[0]
+    for i in range(1, len(monsters)):
+        if monsters[i].health <= 0:
+            results[i] = 1
+    return results
 
 InitGame()
 ResetGame()
 
 # 遊戲主迴圈
 while running:
-
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -487,6 +467,18 @@ while running:
 
     if keys[pygame.K_ESCAPE]:
         running = False    
+    elif keys[pygame.K_RETURN]:
+        if enter_released:  # 只有剛放開又按下才執行
+            if is_in_game == 3:
+                is_in_game = 4
+                delay = 0
+            elif is_in_game == 4:
+                ResetGame()
+                is_in_game = 0
+            enter_released = False  # 防止連續觸發
+    else:
+        enter_released = True  # 放開後可以再觸發
+
 
     #start page, input player name
     if is_in_game == 0:
@@ -510,8 +502,7 @@ while running:
     
     #collection    
     elif is_in_game == 4:
-        # show_leaderboard(moon_warriors_score, start_time, end_time)
-        restart_detect()
+        show_collection(screen, monsters, traverse_check(monsters), success_images, fail_images)
 
     #draw_grid(screen, WIDTH, HEIGHT)
 
@@ -519,3 +510,4 @@ while running:
     pygame.time.delay(30)
 
 pygame.quit()
+sys.exit()

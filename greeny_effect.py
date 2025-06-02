@@ -22,8 +22,8 @@ class GreenyEffect:
     def update_and_draw(self, screen):
         # 綠頭魚正在顯示中
         if self.visible:
-            # 如果超過10秒就關閉並重設
-            if time.time() - self.show_start_time > 10:
+            # 如果超過4秒就關閉並重設
+            if time.time() - self.show_start_time > 4:
                 self.visible = False
                 self.attack_count = 0
                 self.show_start_time = None
