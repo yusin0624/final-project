@@ -3,7 +3,7 @@ import sys
 import random
 import math
 def willy_rain(screen, clock):
-    # 注意: 這裡 clock 傳進來，不用自己創
+
     import pygame
     import random
 
@@ -82,7 +82,7 @@ def willy():
         result = _willy_game()
         if result == "win":
             return "back_to_main"   # 成功後才真正離開
-        # 若 result == "lose" 就 continue，自動重開
+        # 若 result == "lose" 就 continue，自動重開遊戲
 
 
 def _willy_game():
@@ -232,7 +232,7 @@ def _willy_game():
             show_ouch = False
 
         if score >= goal:
-            pygame.mixer.music.fadeout(1500)  #  背景音樂淡出，用1.5秒慢慢消失
+            pygame.mixer.music.fadeout(1500)  # 背景音樂淡出，用1.5秒慢慢消失
 
             gameclear_img = pygame.image.load("assets/win.png")
             gameclear_img = pygame.transform.scale(gameclear_img, (WIDTH, HEIGHT))
@@ -307,7 +307,7 @@ def _willy_game():
                 said_begin = True
         else:
             if show_begin:  # 只在第一次從開場轉正常狀態時觸發
-                pygame.mixer.music.play(-1)  # 🔥 背景音樂開始循環播放
+                pygame.mixer.music.play(-1)  # 背景音樂開始循環播放
                 show_begin = False
 
             screen.blit(dialog_img, dialog_pos)
@@ -333,4 +333,4 @@ def _willy_game():
         clock.tick(60)
         
 if __name__ == "__main__":
-    willy()             # 正式遊戲
+    willy()            
