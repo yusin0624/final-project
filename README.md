@@ -12,7 +12,7 @@
 
 # Game Flow
 1. Menu: Show introductions and for players to enter their name.
-2. Gameplay phase: Consist of battle phase and transition phase. The player need to beat every monster met on the way.
+2. Gameplay phase: Alternates betweeen battle phase and transition phase. The player need to beat every monster met on the way.
 3. Ending: If the player defeats the ninth monster, they win the game. Otherwise, the game ends in failure.
 4. Leaderboard: Rank players' score and used time.
 5. Collection: Defeaing a monster can collect a correspond badge.
