@@ -376,12 +376,12 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
     
     screen.blit(leaderboard_img, (0, 0))
 
-    # 新增玩家成績
+    # 新增玩家成績(先檢查排行榜中是否已有此玩家的紀錄，沒有的話就新增)
     if not any(score["name"] == player_name for score in moon_warriors_score):
-        player_score_time = end_time - start_time
+        player_score_time = end_time - start_time # 計算打怪時間
         moon_warriors_score.append({"name": player_name, "score": player.score, "time": player_score_time})
     
-    # 本次成績
+    # 顯示本次成績
     player_score_time = end_time - start_time
     tip_text = font.render("Your Score:", True, (255, 255, 255))
     name_text = font.render(player_name, True, (255, 255, 255))
@@ -393,19 +393,21 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
     screen.blit(score_text, (835, 180))   
     screen.blit(time_text, (1025, 180))
 
-    # 排序
+    # 排序 : 先依造成傷害總量(由多到少)，再比時間(由快到慢)
     moon_warriors_score.sort(key=lambda x: (-x["score"], x["time"]))
 
+    # 儲存排行榜
     save_scoreboard(moon_warriors_score)
 
     # 沒找到威力，排名下降一位
     if find_willy != 1:
         for j, playerrr in enumerate(moon_warriors_score[:5]):
             if playerrr["name"] == player_name and j < 4:
-                moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] # 第 j 行跟第 j+1 行交換
+                # 第 j 行跟第 j+1 行交換
+                moon_warriors_score[j], moon_warriors_score[j+1] = moon_warriors_score[j+1], moon_warriors_score[j] 
                 
 
-    # 把記分板印出來
+    # 把記分板印出來(前五名)
     for i, playerrr in enumerate(moon_warriors_score[:5]):
         
         time_str = f"{playerrr['time']:.2f}"
@@ -422,18 +424,19 @@ def show_leaderboard(moon_warriors_score, start_time, end_time, find_willy, play
         screen.blit(name_text, (260, y))   
         screen.blit(score_text, (660, y))   
         screen.blit(time_text, (850, y))  
-        
+    
+    # 沒找到威力
     if find_willy != 1:
         screen.blit(tip_text, (250,630))   
         
 # 成績資料
 def save_scoreboard(scoreboard, filename="score.json"):
-    with open(filename, "w") as f:
+    with open(filename, "w") as f:  # 檔案原本就存在 : 直接清空原本內容並覆蓋 / 檔案不存在 : 會自動建立新檔案
         json.dump(scoreboard, f)
 
 def load_scoreboard(filename="score.json"):
     try:
-        with open(filename, "r") as f:
+        with open(filename, "r") as f:  # 使用 "r" 開啟、讀取檔案，若檔案不存在 --> FileNotFoundError
             return json.load(f)
     except FileNotFoundError:
         return []  # 如果檔案不存在就回傳空列表
@@ -451,7 +454,7 @@ def show_collection(screen, monsters, results, success_images, fail_images):
     # 可調整的排版參數
     spacing_x = 220      # 圖片間的水平距離
     spacing_y = 200      # 圖片間的垂直距離（行與行之間）
-    start_x = 150         # 第一列圖的起始 x 座標
+    start_x = 150        # 第一列圖的起始 x 座標
     start_y = 200        # 第一列圖的起始 y 座標
     max_per_row = 5      # 每列最多幾個
 
