@@ -87,7 +87,7 @@ final_project/
 
 | Member                 | Responsibility                         |
 |------------------------|----------------------------------------|
-| 413410007 張家馨 Joy    | Midterm Presentation, Final Presentation, Leaderboard, Image Sourcing, Player name             |
-| 413410033 黃方柔 Zoe    | Midterm Presentation, Final Presentation, Find Willy, Green Fish Effect, Background music      |
-| 413410057 林俞馨 Cindy  | Midterm Presentation, README, System coordination, Game loop, Character behavior, Art Design   |
-| 413410069 呂慈玟 Wendy  | Midterm Presentation, Final Presentation, Trailer Video, HP bar, Collection                    |
+| 413410007 張家馨 Joy    | Midterm Presentation, Final Presentation, Leaderboard, Image Sourcing, Player name                  |
+| 413410033 黃方柔 Zoe    | Midterm Presentation, Final Presentation, Find Willy, Green Fish Effect, Background music           |
+| 413410057 林俞馨 Cindy  | Midterm Presentation, README, System coordination, Game loop, Character behavior, Art Design, Debug |
+| 413410069 呂慈玟 Wendy  | Midterm Presentation, Final Presentation, Trailer Video, HP bar, Collection                         |
